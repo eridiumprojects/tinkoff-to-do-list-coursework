@@ -1,0 +1,16 @@
+server:
+  error:
+    include-message: always
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: toor
+    username: postgres
+    url: jdbc:postgresql://localhost:5433/
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mvc:
+  server:
+    error:
+      include-message: always
