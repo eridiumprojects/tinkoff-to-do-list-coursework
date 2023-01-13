@@ -22,6 +22,10 @@ public class Task {
     @Column(name = "deadline")
     private String deadline;
 
+//    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+//    @JoinColumn(name = "user_id")
+//    private User user;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

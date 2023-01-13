@@ -11,7 +11,7 @@ public class TaskMapper {
     public Task toTask(TaskDto taskDto) {
         Task task = new Task();
         task.setData(taskDto.getData());
-        task.setDeadline(taskDto.getDeadline());
+        task.setDeadline("-");
         task.setCheckbox(false);
         return task;
     }

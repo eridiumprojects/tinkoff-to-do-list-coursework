@@ -5,6 +5,8 @@ import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -22,6 +24,9 @@ public class User {
     private String password;
     @Column(name = "email")
     private String email;
+
+//    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "user")
+//    private List<Task> tasks = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
