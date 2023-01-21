@@ -21,6 +21,10 @@ public class Task {
     private boolean checkbox;
     @Column(name = "deadline")
     private String deadline;
+    @Column(name = "created")
+    private String created;
+    @Column(name = "modified")
+    private String modified;
 
 //    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
 //    @JoinColumn(name = "user_id")

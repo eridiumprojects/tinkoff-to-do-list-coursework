@@ -1,11 +1,13 @@
-package com.example.todolistcoursework.api.dtos;
+package com.example.todolistcoursework.domain.entities;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
-public class DeadlineDto {
+public class Date {
     private String day;
     private String month;
     private int year;

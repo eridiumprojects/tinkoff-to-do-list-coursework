@@ -11,6 +11,10 @@ public class TaskDto {
     @NotEmpty
     private String data;
     @JsonIgnore
+    private String created;
+    @JsonIgnore
+    private String modified;
+    @JsonIgnore
     private boolean checkbox;
     @JsonIgnore
     private String deadline;

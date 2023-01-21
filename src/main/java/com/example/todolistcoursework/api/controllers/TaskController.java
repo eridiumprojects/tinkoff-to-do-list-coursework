@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("")
 @RestController
@@ -52,4 +53,23 @@ public class TaskController {
     public Task setTaskDeadline(@PathVariable Long id, @Valid @RequestBody DeadlineDto deadline) {
         return taskService.setDeadline(id, deadline);
     }
+
+    @GetMapping(value = "search", produces = "application/json")
+    public List<Task> searchTasks(@RequestParam(name = "data") Optional<String> data,
+                                  @RequestParam(name = "checkbox") Optional<Boolean> checkbox,
+                                  @RequestParam(defaultValue = "0", required = false, name = "actual") int actual,
+                                  @RequestParam(name = "order_by") Optional<String> order) {
+        return taskService.searchTasks(data, checkbox, actual, order);
+    }
+
+    @GetMapping(value = "actual", produces = "application/json")
+    public List<Task> getActualTasks() {
+        return taskService.getActualTasks();
+    }
+
+    @GetMapping(value = "completed", produces = "application/json")
+    public List<Task> getCompletedTasks() {
+        return taskService.getCompletedTasks();
+    }
+
 }
