@@ -180,7 +180,7 @@ __Response body__:
 ```
 [
   {
-    "id": 6,
+    "id": 10,
     "data": "Do Java",
     "checkbox": true,
     "deadline": null,
@@ -188,7 +188,7 @@ __Response body__:
     "modified": "21-01-2023_13:40"
   },
   {
-    "id": 10,
+    "id": 6,
     "data": "Do Java",
     "checkbox": true,
     "deadline": "04-05-2022_22:56",
