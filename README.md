@@ -168,7 +168,7 @@ __Response body__:
 
 #### Tasks search and order
 
-#### `GET /search?data=DATA`   //Will find a task with the name {DATA}
+#### `GET /search?data=DATA`    //Will find a task with the name {DATA}
 #### `GET /search?actual=0`    //Will find completed tasks ordered by deadline 
 #### `GET /search?actual=1`    //Will find uncompleted tasks ordered by deadline
 
