@@ -184,15 +184,15 @@ __Response body__:
     "data": "Do Java",
     "checkbox": true,
     "deadline": null,
-    "created": "19-01-2023_13:38:43",
-    "modified": "19-01-2023_13:40:40"
+    "created": "20-01-2023_13:38",
+    "modified": "21-01-2023_13:40"
   },
   {
     "id": 10,
     "data": "Do Java",
     "checkbox": true,
     "deadline": "04-05-2022_22:56",
-    "created": "20-01-2023_11:07",
+    "created": "19-01-2023_11:07",
     "modified": "21-01-2023_13:36"
   }
 ]
