@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SignupRequest {
-    @NotEmpty
-    String username;
-    @Pattern(regexp = "[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+")
-    String email;
-    @NotEmpty
-    String password;
+    @NotEmpty String username;
+    @Pattern(regexp = "[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+") String email;
+    @NotEmpty String password;
 }

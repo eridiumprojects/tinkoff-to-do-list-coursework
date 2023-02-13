@@ -32,15 +32,10 @@ public class RefreshTokenService {
     public ResponseEntity<?> refresh(RefreshRequest request) {
         String refreshToken = request.getRefreshToken();
 
-        return findByToken(refreshToken)
-                .map(this::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
-                    return ResponseEntity.ok(new RefreshResponse(token, refreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(refreshToken,
-                        "Refresh token is not in database!"));
+        return findByToken(refreshToken).map(this::verifyExpiration).map(RefreshToken::getUser).map(user -> {
+            String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+            return ResponseEntity.ok(new RefreshResponse(token, refreshToken));
+        }).orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
     }
 
     public Optional<RefreshToken> findByToken(String token) {
@@ -64,7 +59,6 @@ public class RefreshTokenService {
             throw new TokenRefreshException(token.getToken(),
                     "Refresh token was expired. Please make a new signin request");
         }
-
         return token;
     }
 

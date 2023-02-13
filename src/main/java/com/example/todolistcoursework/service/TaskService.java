@@ -37,10 +37,8 @@ public class TaskService {
     JwtUtils jwtUtils;
 
     private User getUser() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        UserDetailsImpl userDetails =
+                (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<User> user = userRepository.findByEmail(userDetails.getEmail());
         if (user.isEmpty()) {
             throw new IllegalArgumentException("There is no such user");
@@ -108,8 +106,7 @@ public class TaskService {
     }
 
     public List<Task> searchTasks(
-            Optional<String> data, Optional<Boolean> checkbox,
-            int actual, Optional<String> order
+            Optional<String> data, Optional<Boolean> checkbox, int actual, Optional<String> order
     ) {
         if (order.isEmpty()) {
             if (data.isPresent()) {
