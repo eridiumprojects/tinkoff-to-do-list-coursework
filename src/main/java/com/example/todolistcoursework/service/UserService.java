@@ -3,6 +3,7 @@ package com.example.todolistcoursework.service;
 import com.example.todolistcoursework.model.dto.JwtResponse;
 import com.example.todolistcoursework.model.dto.LoginRequest;
 import com.example.todolistcoursework.model.dto.SignupRequest;
+import com.example.todolistcoursework.model.entity.RefreshToken;
 import com.example.todolistcoursework.model.entity.Role;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
@@ -31,17 +32,22 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserService(AuthenticationManager authenticationManager,
-                       UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       PasswordEncoder encoder,
-                       JwtUtils jwtUtils) {
+    public UserService(
+            AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder encoder,
+            JwtUtils jwtUtils,
+            RefreshTokenService refreshTokenService
+    ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public JwtResponse loginUser(LoginRequest loginRequest) {
@@ -56,7 +62,10 @@ public class UserService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
         return new JwtResponse(jwt,
+                refreshToken.getToken(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),

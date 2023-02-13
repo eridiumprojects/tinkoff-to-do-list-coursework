@@ -4,6 +4,7 @@ import com.example.todolistcoursework.model.enums.ERole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+
 import java.util.Objects;
 
 @Getter

@@ -3,9 +3,9 @@ package com.example.todolistcoursework.service;
 import com.example.todolistcoursework.model.dto.TaskDto;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
+import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
 import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.TaskRepository;
-import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
 import com.example.todolistcoursework.repository.UserRepository;
 import com.example.todolistcoursework.security.UserDetailsImpl;
 import com.example.todolistcoursework.util.JwtUtils;
@@ -107,8 +107,10 @@ public class TaskService {
         }
     }
 
-    public List<Task> searchTasks(Optional<String> data, Optional<Boolean> checkbox,
-                                  int actual, Optional<String> order) {
+    public List<Task> searchTasks(
+            Optional<String> data, Optional<Boolean> checkbox,
+            int actual, Optional<String> order
+    ) {
         if (order.isEmpty()) {
             if (data.isPresent()) {
                 return taskRepository.findAllByData(data.get());

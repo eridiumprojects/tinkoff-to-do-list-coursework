@@ -13,6 +13,7 @@ public class AdviceController {
     public ResponseEntity<Object> handleNotFound(ObjectNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(value = {ObjectAlreadyExists.class})
     public ResponseEntity<Object> handleNotFound(ObjectAlreadyExists ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);

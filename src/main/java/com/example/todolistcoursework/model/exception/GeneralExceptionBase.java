@@ -1,6 +1,6 @@
 package com.example.todolistcoursework.model.exception;
 
-public class GeneralExceptionBase extends RuntimeException{
+public class GeneralExceptionBase extends RuntimeException {
     public GeneralExceptionBase() {
         super();
     }

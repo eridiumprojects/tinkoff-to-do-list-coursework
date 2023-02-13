@@ -1,9 +1,9 @@
 package com.example.todolistcoursework.controller;
 
 import com.example.todolistcoursework.model.dto.TaskDto;
-import com.example.todolistcoursework.util.TaskMapper;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.service.TaskService;
+import com.example.todolistcoursework.util.TaskMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -49,10 +49,12 @@ public class TaskController {
     }
 
     @GetMapping(value = "/search")
-    public List<Task> searchTasks(@RequestParam(name = "data") Optional<String> data,
-                                  @RequestParam(name = "checkbox") Optional<Boolean> checkbox,
-                                  @RequestParam(defaultValue = "0", required = false, name = "actual") int actual,
-                                  @RequestParam(name = "order_by") Optional<String> order) {
+    public List<Task> searchTasks(
+            @RequestParam(name = "data") Optional<String> data,
+            @RequestParam(name = "checkbox") Optional<Boolean> checkbox,
+            @RequestParam(defaultValue = "0", required = false, name = "actual") int actual,
+            @RequestParam(name = "order_by") Optional<String> order
+    ) {
         return taskService.searchTasks(data, checkbox, actual, order);
     }
 
