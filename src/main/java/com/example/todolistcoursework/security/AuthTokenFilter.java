@@ -1,6 +1,6 @@
-package com.example.todolistcoursework.util;
+package com.example.todolistcoursework.security;
 
-import com.example.todolistcoursework.security.UserDetailsServiceImpl;
+import com.example.todolistcoursework.util.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

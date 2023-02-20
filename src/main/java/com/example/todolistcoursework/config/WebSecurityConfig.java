@@ -2,7 +2,7 @@ package com.example.todolistcoursework.config;
 
 import com.example.todolistcoursework.model.exception.AuthEntryPointJwt;
 import com.example.todolistcoursework.security.UserDetailsServiceImpl;
-import com.example.todolistcoursework.util.AuthTokenFilter;
+import com.example.todolistcoursework.security.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
