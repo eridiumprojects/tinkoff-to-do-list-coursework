@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.service;
 
+import com.example.todolistcoursework.model.dto.FilterRequest;
 import com.example.todolistcoursework.model.dto.TaskDto;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
@@ -105,29 +106,8 @@ public class TaskService {
         }
     }
 
-    public List<Task> searchTasks(
-            Optional<String> data, Optional<Boolean> checkbox, int actual, Optional<String> order
-    ) {
-        if (order.isEmpty()) {
-            if (data.isPresent()) {
-                return taskRepository.findAllByData(data.get());
-            }
-            if (checkbox.isPresent()) {
-                return taskRepository.findAllByCheckbox(checkbox.get());
-            }
-        } else {
-            if (data.isPresent() && order.get().equals("created_time")) {
-                return taskRepository.findAllByDataOrderQuery(data.get());
-            }
-            if (checkbox.isPresent() && order.get().equals("created_time")) {
-                return taskRepository.findAllByCheckboxOrderQuery(checkbox.get());
-            }
-        }
-        if (actual == 1) {
-            return taskRepository.findAllByOrderByCreated();
-        } else {
-            return taskRepository.findAllCompletedTasks();
-        }
+    public List<Task> filterTasks(FilterRequest filterRequest) {
+        return TaskFilter.filter(filterRequest, getUser().getTasks().stream().toList());
     }
 
     public List<Task> getActualTasks() {
@@ -137,6 +117,6 @@ public class TaskService {
 
     public List<Task> getCompletedTasks() {
         User user = getUser();
-        return user.getTasks().stream().filter(a -> !a.isCheckbox()).toList();
+        return user.getTasks().stream().filter(Task::isCheckbox).toList();
     }
 }

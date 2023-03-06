@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.controller;
 
+import com.example.todolistcoursework.model.dto.FilterRequest;
 import com.example.todolistcoursework.model.dto.TaskDto;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.service.TaskService;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequestMapping("/tasks")
 @RestController
@@ -18,22 +18,22 @@ public class TaskController {
     private final TaskService taskService;
     private final TaskMapper taskMapper;
 
-    @PostMapping(value = "/create")
+    @PostMapping("/create")
     public Task createTask(@Valid @RequestBody TaskDto taskDto) {
         return taskService.createTask(taskMapper.toTask(taskDto));
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public Task getTask(@PathVariable Long id) {
         return taskService.getTask(id);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping("/{id}")
     public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto taskDto) {
         return taskService.updateTask(id, taskDto);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
     }
@@ -48,14 +48,9 @@ public class TaskController {
         return taskService.tickTask(id);
     }
 
-    @GetMapping(value = "/search")
-    public List<Task> searchTasks(
-            @RequestParam(name = "data") Optional<String> data,
-            @RequestParam(name = "checkbox") Optional<Boolean> checkbox,
-            @RequestParam(defaultValue = "0", required = false, name = "actual") int actual,
-            @RequestParam(name = "order_by") Optional<String> order
-    ) {
-        return taskService.searchTasks(data, checkbox, actual, order);
+    @GetMapping(value = "/filter")
+    public List<Task> searchTasks(@RequestBody FilterRequest filterRequest) {
+        return taskService.filterTasks(filterRequest);
     }
 
     @GetMapping(value = "/actual")

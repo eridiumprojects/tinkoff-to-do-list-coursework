@@ -2,7 +2,7 @@ package com.example.todolistcoursework.config;
 
 import com.example.todolistcoursework.model.exception.AuthEntryPointJwt;
 import com.example.todolistcoursework.security.UserDetailsServiceImpl;
-import com.example.todolistcoursework.util.AuthTokenFilter;
+import com.example.todolistcoursework.security.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,12 +61,12 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeHttpRequests().requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/test/all").permitAll().anyRequest().authenticated().and().exceptionHandling()
+                .anyRequest().authenticated().and().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
