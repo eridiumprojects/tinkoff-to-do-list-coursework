@@ -15,13 +15,9 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private final Long id;
-
     private final String username;
-
     private final String email;
-
     @JsonIgnore
     private final String password;
 

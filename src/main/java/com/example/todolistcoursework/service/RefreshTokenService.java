@@ -7,7 +7,6 @@ import com.example.todolistcoursework.model.exception.TokenRefreshException;
 import com.example.todolistcoursework.repository.RefreshTokenRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import com.example.todolistcoursework.util.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +18,17 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
     private final Long refreshTokenDurationMs = 86400000L;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private UserRepository userRepository;
+    public RefreshTokenService(UserRepository userRepository,
+                               JwtUtils jwtUtils,
+                               RefreshTokenRepository refreshTokenRepository) {
+        this.jwtUtils = jwtUtils;
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     public ResponseEntity<?> refresh(RefreshRequest request) {
         String refreshToken = request.getRefreshToken();

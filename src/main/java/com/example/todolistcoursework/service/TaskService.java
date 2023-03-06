@@ -5,16 +5,10 @@ import com.example.todolistcoursework.model.dto.TaskDto;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
-import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import com.example.todolistcoursework.security.UserDetailsImpl;
-import com.example.todolistcoursework.util.JwtUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,20 +16,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class TaskService {
-    @Autowired
     private final TaskRepository taskRepository;
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder encoder;
-    @Autowired
-    JwtUtils jwtUtils;
+    private final UserRepository userRepository;
+    public TaskService(TaskRepository taskRepository,
+                       UserRepository userRepository) {
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+    }
 
     private User getUser() {
         UserDetailsImpl userDetails =
