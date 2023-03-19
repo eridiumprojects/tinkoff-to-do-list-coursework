@@ -38,7 +38,6 @@ public class TaskService {
     public Task createTask(Task task) {
         User user = getUser();
         task.setUser(user);
-        task.setCreated(task.getCreated());
         taskRepository.save(task);
         return task;
     }
@@ -75,7 +74,6 @@ public class TaskService {
     public void deleteTask(Long id) {
         User user = getUser();
         Optional<Task> task = taskRepository.findById(id);
-        //аналогично с нижним
         if (task.isPresent() && task.get().getUser().equals(user)) {
             taskRepository.deleteById(id);
         } else {
@@ -86,7 +84,6 @@ public class TaskService {
     public Task tickTask(Long id) {
         User user = getUser();
         Optional<Task> task = taskRepository.findById(id);
-        //тут легче сделать в if отрицание, а ниже уже просто закинуть все без else
         if (task.isPresent() && task.get().getUser().equals(user)) {
             Task existingTask = task.get();
             existingTask.tick();

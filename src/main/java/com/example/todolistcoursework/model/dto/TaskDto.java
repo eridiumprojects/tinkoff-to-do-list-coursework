@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TaskDto {
     @NotEmpty
+    private Long id;
+    @NotEmpty
     private String data;
     @JsonIgnore
     private LocalDateTime deadline;
