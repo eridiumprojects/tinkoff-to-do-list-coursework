@@ -34,6 +34,7 @@ public class TaskService {
     public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
+        task.setCreated(task.getCreated());
         taskRepository.save(task);
         return TaskMapper.toApi(task);
     }
