@@ -38,6 +38,7 @@ public class TaskService {
     public Task createTask(Task task) {
         User user = getUser();
         task.setUser(user);
+        task.setCreated(task.getCreated());
         taskRepository.save(task);
         return task;
     }
