@@ -1,4 +1,4 @@
-package com.example.todolistcoursework.util;
+package com.example.todolistcoursework.builder;
 
 import com.example.todolistcoursework.model.dto.TaskDto;
 import com.example.todolistcoursework.model.entity.Task;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class TaskMapper {
-    public Task toTask(TaskDto taskDto) {
+    public static Task toApi(TaskDto taskDto) {
         Task task = new Task();
         task.setData(taskDto.getData());
         task.setDeadline(null);

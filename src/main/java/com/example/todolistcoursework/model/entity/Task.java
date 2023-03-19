@@ -27,7 +27,7 @@ public class Task {
     private LocalDateTime created;
     @Column
     private LocalDateTime modified;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
