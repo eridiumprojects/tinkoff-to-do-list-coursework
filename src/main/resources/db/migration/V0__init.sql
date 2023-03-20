@@ -48,7 +48,7 @@ create table public.tasks
 
 create table public.refreshtoken
 (
-    id        bigserial       not null
+    id        bigserial
         primary key,
     token     varchar(255) not null
         constraint uk_or156wbneyk8noo4jstv55ii3
