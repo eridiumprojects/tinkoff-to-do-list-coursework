@@ -1,6 +1,20 @@
+pom:
+  propertiesFileName: properties-pom.yaml
+
+logging:
+  level:
+    root: info
+    com.example.todolistcoursework: DEBUG
+
 server:
+  servlet:
+    context-path: /api
   error:
     include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: true
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -10,7 +24,25 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  mvc:
   server:
     error:
       include-message: always
+  flyway:
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+security:
+  jwt:
+    block-valid-access: true
+    storage: accessTokens
+    access:
+      secret: access
+      expiration: 30m
+    refresh:
+      secret: refresh
+      expiration: 168h
