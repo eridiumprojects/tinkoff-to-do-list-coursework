@@ -128,7 +128,7 @@ public class AopConfig {
         }
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.TaskService.getTasks(..))")
+    @After("execution(* com.example.todolistcoursework.service.TaskService.getTasks(..))")
     public void allTasksLog() {
         log.info("The user has been received the list of his all tasks.");
     }
