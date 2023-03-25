@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class TaskDto {
-    @NotEmpty
+    @JsonIgnore
     private Long id;
     @NotEmpty
     private String data;

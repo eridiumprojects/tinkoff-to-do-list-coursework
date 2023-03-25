@@ -34,7 +34,7 @@ public class AuthService {
 
     public RefreshResponse refresh(RefreshRequest request) {
         if (!jwtService.validateRefreshToken(request.getRefreshToken())) {
-            throw new AuthException("Invalid refresh token");
+            throw new AuthException("Error: Invalid refresh token");
         }
 
         var claims = jwtService.getRefreshClaims(request.getRefreshToken());
@@ -49,7 +49,7 @@ public class AuthService {
         var currentRefreshToken = refreshTokenRepository.findByToken(request.getRefreshToken());
 
         if (currentRefreshToken.isEmpty()) {
-            throw new AuthException("Refresh token doesn't exist");
+            throw new AuthException("Error: Refresh token doesn't exist");
         }
 
         if (jwtService.validateAccessTokenLifetime(device.getId())) {
