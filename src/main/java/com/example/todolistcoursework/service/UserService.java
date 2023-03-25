@@ -42,7 +42,7 @@ public class UserService {
                 .orElseThrow(() -> new AuthException("User doesn't exist"));
 
         if (user.getPassword() != null && !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new AuthException("Invalid password");
+            throw new AuthException("Error: Invalid password");
         }
 
         var device = deviceRepository.findByDeviceToken(loginRequest.getDeviceToken());

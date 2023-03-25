@@ -1,6 +1,10 @@
 package com.example.todolistcoursework.config;
 
+import com.example.todolistcoursework.model.exception.AuthException;
+import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
+import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +27,16 @@ public class AopConfig {
         log.info("The user is trying to register.");
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.UserService.registerUser(..))")
-    public void registerUserLog() {
-        log.info("The user has been registered.");
+    @Around("execution(* com.example.todolistcoursework.service.UserService.registerUser(..))")
+    public void registerUserLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object user = null;
+        try {
+            user = proceedingJoinPoint.proceed();
+            log.info("The user has been registered.");
+        } catch (ObjectAlreadyExists e) {
+            log.error("The user with these details is already exists.");
+            throw e;
+        }
     }
 
     @Before("execution(* com.example.todolistcoursework.service.UserService.loginUser(..))")
@@ -33,9 +44,16 @@ public class AopConfig {
         log.info("The user is trying to login into account.");
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.UserService.loginUser(..))")
-    public void loginUserLog() {
-        log.info("The user has been logged into account.");
+    @Around("execution(* com.example.todolistcoursework.service.UserService.loginUser(..))")
+    public void loginUserLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object user = null;
+        try {
+            user = proceedingJoinPoint.proceed();
+            log.info("The user has been logged into account.");
+        } catch (AuthException e) {
+            log.error("The user inputs incorrect password. Access to the account is forbidden.");
+            throw e;
+        }
     }
 
     @After("execution(* com.example.todolistcoursework.service.JwtService.generateAccessToken(..))")
@@ -43,7 +61,7 @@ public class AopConfig {
         log.info("The access token has been generated.");
     }
 
-    @Around("execution(* com.example.todolistcoursework.service.JwtService.generateRefreshToken(..))")
+    @After("execution(* com.example.todolistcoursework.service.JwtService.generateRefreshToken(..))")
     public void refreshTokenLog() {
         log.info("The refresh token has been generated.");
     }
@@ -73,19 +91,41 @@ public class AopConfig {
         log.info("The user has been deleted his account.");
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.TaskService.updateTask(..))")
-    public void taskUpdateLog() {
-        log.info("The user has been updated his task.");
+    @Around("execution(* com.example.todolistcoursework.service.TaskService.updateTask(..))")
+    public void taskUpdateLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object task = null;
+        try {
+            task = proceedingJoinPoint.proceed();
+            log.info("The user has been updated his task.");
+
+        } catch (ObjectNotFoundException e) {
+            log.error("The user does not have such task");
+            throw e;
+        }
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.TaskService.deleteTask(..))")
-    public void taskDeleteLog() {
-        log.info("The user has been deleted his task.");
+    @Around("execution(* com.example.todolistcoursework.service.TaskService.deleteTask(..))")
+    public void taskDeleteLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object task = null;
+        try {
+            task = proceedingJoinPoint.proceed();
+            log.info("The user has been deleted his task.");
+        } catch (ObjectNotFoundException e) {
+            log.error("The user does not have such task");
+            throw e;
+        }
     }
 
-    @AfterReturning("execution(* com.example.todolistcoursework.service.TaskService.tickTask(..))")
-    public void taskTickLog() {
-        log.info("The user has been ticked his task.");
+    @Around("execution(* com.example.todolistcoursework.service.TaskService.tickTask(..))")
+    public void taskTickLog(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object task = null;
+        try {
+            task = proceedingJoinPoint.proceed();
+            log.info("The user has been ticked his task.");
+        } catch (ObjectNotFoundException e) {
+            log.error("The user does not have such task");
+            throw e;
+        }
     }
 
     @AfterReturning("execution(* com.example.todolistcoursework.service.TaskService.getTasks(..))")
