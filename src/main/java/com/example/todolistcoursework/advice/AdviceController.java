@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.Instant;
 
-@Slf4j
 @ControllerAdvice
 public class AdviceController extends ResponseEntityExceptionHandler {
 
