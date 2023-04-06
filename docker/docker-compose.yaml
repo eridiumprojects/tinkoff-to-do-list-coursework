@@ -7,7 +7,7 @@ services:
     image: postgres:14.1-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: toor
+      POSTGRES_PASSWORD: postgres
       POSTGRES_USERNAME: postgres
     ports:
       - "5433:5432"

@@ -1,0 +1,5 @@
+server:
+  port: 9097
+telegram:
+  bot:
+    token: 5734029445:AAHw0A0i2yiJ1ujT7vN45a8mFusgbrm7tT0
