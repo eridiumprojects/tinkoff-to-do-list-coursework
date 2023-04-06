@@ -26,7 +26,7 @@ public class TaskService {
     private User getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new ObjectNotFoundException("There is no such user");
+            throw new ObjectNotFoundException("Error: There is no such user");
         }
         return user.get();
     }
@@ -34,6 +34,7 @@ public class TaskService {
     public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
+        task.setCreated(task.getCreated());
         taskRepository.save(task);
         return TaskMapper.toApi(task);
     }
@@ -43,7 +44,7 @@ public class TaskService {
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException("This user does not have such task");
+            throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
@@ -61,7 +62,7 @@ public class TaskService {
             taskRepository.save(existingTask);
             return TaskMapper.toApi(existingTask);
         } else {
-            throw new ObjectNotFoundException("This user does not have such task");
+            throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
@@ -71,7 +72,7 @@ public class TaskService {
             taskRepository.deleteById(id);
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException("This user does not have such task");
+            throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
@@ -83,7 +84,7 @@ public class TaskService {
             taskRepository.save(existingTask);
             return TaskMapper.toApi(existingTask);
         } else {
-            throw new ObjectNotFoundException("This user does not have such task");
+            throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 

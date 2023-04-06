@@ -5,6 +5,7 @@ import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.Optional.ofNullable;
 
-@Slf4j
+@Log4j2
 @Component
 public class JwtService {
     public static final String USER_ID_CLAIM = "userId";

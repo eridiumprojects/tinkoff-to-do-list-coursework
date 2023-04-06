@@ -3,6 +3,7 @@ package com.example.todolistcoursework.controller;
 import com.example.todolistcoursework.model.dto.request.LoginRequest;
 import com.example.todolistcoursework.model.dto.request.RefreshRequest;
 import com.example.todolistcoursework.model.dto.request.SignupRequest;
+import com.example.todolistcoursework.model.dto.response.UserInfoResponse;
 import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.UserService;
 import jakarta.validation.Valid;
@@ -30,8 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<UserInfoResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return ResponseEntity.ok(userService.registerUser(signUpRequest));
     }
 }
-

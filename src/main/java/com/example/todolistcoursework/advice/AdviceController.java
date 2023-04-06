@@ -17,7 +17,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.Instant;
 
-@Slf4j
 @ControllerAdvice
 public class AdviceController extends ResponseEntityExceptionHandler {
 
@@ -42,40 +41,20 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     }
 
 
-    @ExceptionHandler(ObjectNotFoundException.class)
+    @ExceptionHandler(value = {ObjectNotFoundException.class})
     public ResponseEntity<Object> handleNotFound(ObjectNotFoundException ex) {
-        var errorInfo = new ErrorInfo(
-                Instant.now().toEpochMilli(),
-                ErrorInfo.ErrorType.CLIENT,
-                ex.getMessage(),
-                ex.getCause().toString());
-        return new ResponseEntity<>(
-                errorInfo,
-                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
 
     @ExceptionHandler(ObjectAlreadyExists.class)
     public ResponseEntity<Object> handleAlreadyExists(ObjectAlreadyExists ex) {
-        var errorInfo = new ErrorInfo(
-                Instant.now().toEpochMilli(),
-                ErrorInfo.ErrorType.DUPLICATE,
-                ex.getMessage(),
-                ex.getCause().toString());
-        return new ResponseEntity<>(
-                errorInfo,
-                HttpStatus.CONFLICT);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {AuthException.class})
     public ResponseEntity<Object> handleAuthException(AuthException ex) {
-        var errorInfo = new ErrorInfo(
-                Instant.now().toEpochMilli(),
-                ErrorInfo.ErrorType.AUTH,
-                ex.getMessage(),
-                ex.getCause().toString());
-        return new ResponseEntity<>(
-                errorInfo,
-                HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(RuntimeException.class)
