@@ -1,6 +1,8 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.dto.FilterRequest;
+import com.example.todolistcoursework.builder.TaskMapper;
+import com.example.todolistcoursework.model.dto.request.FilterRequest;
+import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.enums.SortOrder;
 
@@ -9,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TaskFilter {
-    public static List<Task> filter(FilterRequest filterRequest, List<Task> tasks) {
+    public static List<TaskInfo> filter(FilterRequest filterRequest, List<Task> tasks) {
         if (filterRequest.getOrders() != null)
             for (var el : filterRequest.getOrders())
                 tasks = filterInternal(tasks, el);
@@ -20,7 +22,7 @@ public class TaskFilter {
         if (filterRequest.getToDate() != null)
             tasks = tasks.stream().filter(e -> e.getDeadline().isBefore(filterRequest.getToDate())).toList();
 
-        return tasks;
+        return tasks.stream().map(TaskMapper::toApi).toList();
     }
 
     private static List<Task> filterInternal(List<Task> tasks, SortOrder order) {

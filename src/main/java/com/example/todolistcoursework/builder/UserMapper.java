@@ -1,11 +1,11 @@
 package com.example.todolistcoursework.builder;
 
-import com.example.todolistcoursework.model.dto.UserInfo;
+import com.example.todolistcoursework.model.dto.response.UserInfoResponse;
 import com.example.todolistcoursework.model.entity.User;
 
 public class UserMapper {
-    public static UserInfo toApi(User user) {
-        return UserInfo.builder()
+    public static UserInfoResponse toApi(User user) {
+        return UserInfoResponse.builder()
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

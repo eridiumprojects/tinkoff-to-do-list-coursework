@@ -1,4 +1,4 @@
-package com.example.todolistcoursework.model.dto;
+package com.example.todolistcoursework.model.dto.response;
 
 import com.example.todolistcoursework.model.entity.Role;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Data
 @Builder
-public class UserInfo {
+public class UserInfoResponse {
     private String firstName;
     private String lastName;
     private String username;

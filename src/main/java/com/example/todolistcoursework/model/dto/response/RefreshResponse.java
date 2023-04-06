@@ -1,4 +1,4 @@
-package com.example.todolistcoursework.model.dto;
+package com.example.todolistcoursework.model.dto.response;
 
 import lombok.Data;
 

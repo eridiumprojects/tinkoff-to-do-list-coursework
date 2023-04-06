@@ -1,6 +1,6 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.dto.RefreshResponse;
+import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import io.jsonwebtoken.*;

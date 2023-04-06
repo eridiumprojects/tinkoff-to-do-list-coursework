@@ -1,10 +1,10 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.UserMapper;
-import com.example.todolistcoursework.model.dto.JwtResponse;
-import com.example.todolistcoursework.model.dto.LoginRequest;
-import com.example.todolistcoursework.model.dto.SignupRequest;
-import com.example.todolistcoursework.model.dto.UserInfo;
+import com.example.todolistcoursework.model.dto.response.JwtResponse;
+import com.example.todolistcoursework.model.dto.request.LoginRequest;
+import com.example.todolistcoursework.model.dto.request.SignupRequest;
+import com.example.todolistcoursework.model.dto.response.UserInfoResponse;
 import com.example.todolistcoursework.model.entity.Device;
 import com.example.todolistcoursework.model.entity.RefreshToken;
 import com.example.todolistcoursework.model.entity.Role;
@@ -102,7 +102,7 @@ public class UserService {
         return ResponseEntity.ok("User registered successfully!");
     }
 
-    public UserInfo getUserInfo(Long userId) {
+    public UserInfoResponse getUserInfo(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new AuthException("User doesn't exists");
@@ -110,7 +110,7 @@ public class UserService {
         return UserMapper.toApi(user.get());
     }
 
-    public UserInfo deleteUser(Long userId) {
+    public UserInfoResponse deleteUser(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new AuthException("User doesn't exists");

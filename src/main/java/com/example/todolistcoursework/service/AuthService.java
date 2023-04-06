@@ -1,7 +1,7 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.dto.RefreshRequest;
-import com.example.todolistcoursework.model.dto.RefreshResponse;
+import com.example.todolistcoursework.model.dto.request.RefreshRequest;
+import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.RefreshToken;
 import com.example.todolistcoursework.model.exception.AuthException;
 import com.example.todolistcoursework.repository.DeviceRepository;

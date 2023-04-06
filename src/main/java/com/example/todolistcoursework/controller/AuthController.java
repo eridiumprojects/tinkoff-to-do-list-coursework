@@ -1,8 +1,8 @@
 package com.example.todolistcoursework.controller;
 
-import com.example.todolistcoursework.model.dto.LoginRequest;
-import com.example.todolistcoursework.model.dto.RefreshRequest;
-import com.example.todolistcoursework.model.dto.SignupRequest;
+import com.example.todolistcoursework.model.dto.request.LoginRequest;
+import com.example.todolistcoursework.model.dto.request.RefreshRequest;
+import com.example.todolistcoursework.model.dto.request.SignupRequest;
 import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.UserService;
 import jakarta.validation.Valid;

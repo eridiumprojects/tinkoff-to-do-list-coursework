@@ -1,6 +1,6 @@
 package com.example.todolistcoursework.controller;
 
-import com.example.todolistcoursework.model.dto.UserInfo;
+import com.example.todolistcoursework.model.dto.response.UserInfoResponse;
 import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/current")
-    public ResponseEntity<UserInfo> getCurrentUser() {
+    public ResponseEntity<UserInfoResponse> getCurrentUser() {
         return ResponseEntity.ok(userService.getUserInfo(authService.getJwtAuth().getUserId()));
     }
 
     @DeleteMapping("/current")
-    public ResponseEntity<UserInfo> deleteCurrentUser() {
+    public ResponseEntity<UserInfoResponse> deleteCurrentUser() {
         return ResponseEntity.ok(userService.deleteUser(authService.getJwtAuth().getUserId()));
     }
 }
