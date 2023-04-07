@@ -2,8 +2,9 @@ package com.example.tg.api;
 
 public enum BotState {
     MENU,
+    LOGIN,
+    IN_ACCOUNT,
     NEXT,
-    REGISTRATION,
-    REGISTERED,
-    LOGIN;
+    CREATE,
+    SHOW
 }
