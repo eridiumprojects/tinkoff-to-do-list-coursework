@@ -7,6 +7,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -25,6 +26,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         currentState = RegistrationState.ASK_USERNAME;
         botState = BotState.MENU;
         List<BotCommand> listOfCommands = new ArrayList<>();
-        listOfCommands.add(new BotCommand(Command.LOGIN.getCommand(), "Войти в существующий аккаунт"));
+        listOfCommands.add(new BotCommand("/login", "Войти в существующий аккаунт"));
 //        listOfCommands.add(new BotCommand("/create", "Главное меню"));
 //        listOfCommands.add(new BotCommand("/register", "Создать аккаунт"));
         try {
@@ -52,12 +54,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "foxytodo_bot";
+        return "kookacreq_bot";
     }
 
     @Override
     public String getBotToken() {
-        return "5734029445:AAEcg9bDrldnzofqR1xWop1QR3R9YIzse2I";
+        return "6046387088:AAGNPEuSjwgt8g2iVQj-Kz3nfXXoVQavy4Q";
     }
 
     @Override
@@ -95,8 +97,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                                     currentState = RegistrationState.ASK_USERNAME;
                                 } else {
                                     sendMessage(chatId, "Вы успешно вошли в аккаунт!");
-                                    sendMessage(chatId, "Для дальнейших действий используйте команду "
-                                            + Command.START.getCommand());
+                                    sendMessage(chatId, "Для дальнейших действий используйте команду /run");
                                     botState = BotState.IN_ACCOUNT;
                                 }
                             } catch (IOException e) {
@@ -114,14 +115,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 case NEXT -> {
                     if (text.equals(Command.CREATE.getCommand())) {
                         botState = BotState.CREATE;
+                        sendMessage(chatId, "Введите название новой таски:");
                     } else if (text.equals(Command.SHOW.getCommand())) {
                         botState = BotState.SHOW;
+                        //TODO перенести SHOW в отдельный кейс
+                        //TODO пофиксить все баги в боте
                         try {
                             JwtResponse jwtResponse = (JwtResponse) jwtFromJsonString(sendSignInRequest(loginUser, chatId));
                             String tasks = sendShowTasksRequest(jwtResponse, chatId);
                             tasksFromJsonString(tasks, chatId);
-                            sendMessage(chatId, "Для выхода в главное меню используйте команду " +
-                                    Command.RETURN.getCommand());
+                            sendMessage(chatId, "Для выхода в главное меню используйте команду /return");
                             botState = BotState.IN_ACCOUNT;
 
                         } catch (IOException e) {
@@ -130,6 +133,20 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     } else {
                         //...
                     }
+                }
+                case CREATE -> {
+                    TaskDTO taskDTO = new TaskDTO();
+                    taskDTO.setData(text);
+                    try {
+                        JwtResponse jwtResponse = (JwtResponse) jwtFromJsonString(sendSignInRequest(loginUser, chatId));
+                        String token = jwtResponse.getAccessToken();
+                        sendCreateTaskRequest(token, taskDTO);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    sendMessage(chatId,"Задание успешно создано!");
+                    sendMessage(chatId, "Для выхода в главное меню используйте команду /return");
+                    botState = BotState.IN_ACCOUNT;
                 }
             }
         }
@@ -186,6 +203,34 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             } finally {
                 response.close();
             }
+        } finally {
+            httpclient.close();
+        }
+    }
+
+    private void sendCreateTaskRequest(String token, TaskDTO taskDTO) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        Charset charset = Charset.forName("utf-8");
+        ContentType contentType = ContentType.create("application/json", charset);
+        try {
+            HttpPost httpPost = new HttpPost("http://localhost:8080/api/task/create");
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(taskDTO);
+            StringEntity entity = new StringEntity(json,contentType);
+            entity.setContentType("application/json");
+            httpPost.setEntity(entity);
+            httpPost.setHeader("Authorization", "Bearer " + token);
+
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            try {
+                HttpEntity responseEntity = response.getEntity();
+                String responseString = EntityUtils.toString(responseEntity,charset);
+                EntityUtils.consume(responseEntity);
+            } finally {
+                response.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } finally {
             httpclient.close();
         }
