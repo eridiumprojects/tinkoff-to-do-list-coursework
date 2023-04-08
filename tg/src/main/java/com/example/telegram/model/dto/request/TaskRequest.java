@@ -1,4 +1,4 @@
-package com.example.tg.api;
+package com.example.telegram.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class TaskDTO implements Serializable {
+public class TaskRequest implements Serializable {
     @JsonIgnore
     private Long id;
     @NotEmpty

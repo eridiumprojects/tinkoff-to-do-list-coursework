@@ -1,12 +1,13 @@
-package com.example.tg.api;
+package com.example.telegram.model.enums;
 
-public enum RegistrationState {
+public enum LoginState {
     ASK_USERNAME(1),
     ASK_PASSWORD(2),
-    LOGIN_PROCESSING(3);
+    LOGIN_PROCESSING(3),
+    AFK(4);
     private int state;
 
-    RegistrationState(int state) {
+    LoginState(int state) {
         this.state = state;
     }
 

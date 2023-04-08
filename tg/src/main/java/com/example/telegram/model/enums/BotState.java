@@ -1,4 +1,4 @@
-package com.example.tg.api;
+package com.example.telegram.model.enums;
 
 public enum BotState {
     AFK,

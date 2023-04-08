@@ -1,4 +1,4 @@
-package com.example.tg.api;
+package com.example.telegram.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

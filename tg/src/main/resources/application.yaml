@@ -2,4 +2,5 @@ server:
   port: 9097
 telegram:
   bot:
-    token: 5734029445:AAHw0A0i2yiJ1ujT7vN45a8mFusgbrm7tT0
+    token: 6046387088:AAE4IUKNd0kfyrmwSx7Kd_r8XDdUzZy7oag
+    username: kookacreq_bot
