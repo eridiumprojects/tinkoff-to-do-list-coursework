@@ -26,70 +26,56 @@ import java.util.List;
 public class MyTelegramBot extends TelegramLongPollingBot {
     private LoginState currentState;
     private BotState botState;
-
     public final TaskService taskService;
-
     public final AuthService authService;
+    public LoginRequest loginUser;
 
     public MyTelegramBot(TaskService taskService, AuthService authService) {
         this.taskService = taskService;
         this.authService = authService;
-        botState = BotState.AFK;
+        this.loginUser = new LoginRequest();
+        initCommands();
         currentState = LoginState.ASK_USERNAME;
-        List<BotCommand> listOfCommands = new ArrayList<>();
-        listOfCommands.add(new BotCommand(ECommand.START.getCommand(), EMessage.INFO_START_MESSAGE.getMessage()));
-        try {
-            this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
-        } catch (TelegramApiException E) {
-            E.printStackTrace();
-        }
+        botState = BotState.AFK;
     }
-
-    LoginRequest loginUser = new LoginRequest();
-
-    //todo разделить все кейсы на свои методы, все методы должны находиться в классе TelegramService
 
     @Override
     public void onUpdateReceived(Update update) {
-        long chatId = update.getMessage().getChatId();
-        String text = update.getMessage().getText();
+        long messageChatId = update.getMessage().getChatId();
+        String messageText = update.getMessage().getText();
         if (update.hasMessage() && update.getMessage().hasText()) {
-            if (text.equals(ECommand.START.getCommand())) {
+            if (messageText.equals(ECommand.START.getCommand())) {
                 botState = BotState.MENU;
             }
             switch (botState) {
-                case MENU -> {
-                    sendMessage(chatId, EMessage.LOGIN_IN_ACCOUNT_WITH_MESSAGE.getMessage()
-                            + ECommand.LOGIN.getCommand());
-                    botState = BotState.LOGIN;
-                }
+                case MENU -> handleMenu(messageChatId);
                 case LOGIN -> {
                     switch (currentState) {
                         case ASK_USERNAME -> {
-                            if (text.equals(ECommand.LOGIN.getCommand())) {
-                                sendMessage(chatId, EMessage.INPUT_USERNAME_MESSAGE.getMessage());
+                            if (messageText.equals(ECommand.LOGIN.getCommand())) {
+                                sendMessage(messageChatId, EMessage.INPUT_USERNAME_MESSAGE.getMessage());
                                 currentState = LoginState.ASK_PASSWORD;
                             } else {
-                                sendMessage(chatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
+                                sendMessage(messageChatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
                             }
                         }
                         case ASK_PASSWORD -> {
-                            loginUser.setUsername(text);
-                            sendMessage(chatId, EMessage.INPUT_PASSWORD_MESSAGE.getMessage());
+                            loginUser.setUsername(messageText);
+                            sendMessage(messageChatId, EMessage.INPUT_PASSWORD_MESSAGE.getMessage());
                             currentState = LoginState.LOGIN_PROCESSING;
                         }
                         case LOGIN_PROCESSING -> {
-                            loginUser.setPassword(text);
+                            loginUser.setPassword(messageText);
                             try {
                                 authService.sendSignInRequest(loginUser);
                                 if (authService.getStatusCode() == 401) {
-                                    sendMessage(chatId, EMessage.INVALID_DATA_MESSAGE.getMessage());
+                                    sendMessage(messageChatId, EMessage.INVALID_DATA_MESSAGE.getMessage());
                                     botState = BotState.MENU;
                                     currentState = LoginState.ASK_USERNAME;
                                 }
                                 if (authService.getStatusCode() == 200) {
-                                    sendMessage(chatId, EMessage.SUCCESSFULLY_LOGGED_MESSAGE.getMessage());
-                                    sendMessage(chatId, EMessage.NEXT_ACTS_MESSAGE.getMessage() +
+                                    sendMessage(messageChatId, EMessage.SUCCESSFULLY_LOGGED_MESSAGE.getMessage());
+                                    sendMessage(messageChatId, EMessage.NEXT_ACTS_MESSAGE.getMessage() +
                                             ECommand.RUN.getCommand());
                                     botState = BotState.IN_ACCOUNT;
                                 }
@@ -100,31 +86,32 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     }
                 }
                 case IN_ACCOUNT -> {
-                    if (text.equals(ECommand.RUN.getCommand()) || text.equals(ECommand.RETURN.getCommand())) {
-                        sendMessage(chatId, EMessage.IN_ACCOUNT_FIRST_MESSAGE.getMessage() +
+                    if (messageText.equals(ECommand.RUN.getCommand()) || messageText.equals(ECommand.RETURN.getCommand())) {
+                        sendMessage(messageChatId, EMessage.IN_ACCOUNT_FIRST_MESSAGE.getMessage() +
                                 ECommand.CREATE.getCommand() +
                                 EMessage.IN_ACCOUNT_SECOND_MESSAGE.getMessage() +
                                 ECommand.SHOW.getCommand());
                         botState = BotState.NEXT;
                     } else {
-                        sendMessage(chatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
+                        sendMessage(messageChatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
                     }
                 }
                 case NEXT -> {
-                    if (text.equals(ECommand.CREATE.getCommand())) {
+                    if (messageText.equals(ECommand.CREATE.getCommand())) {
                         botState = BotState.CREATE;
-                        sendMessage(chatId, EMessage.INPUT_TASK_DATA_MESSAGE.getMessage());
-                    } else if (text.equals(ECommand.SHOW.getCommand())) {
+                        sendMessage(messageChatId, EMessage.INPUT_TASK_DATA_MESSAGE.getMessage());
+                    } else if (messageText.equals(ECommand.SHOW.getCommand())) {
                         botState = BotState.SHOW;
                         try {
-                            JwtResponse jwtResponse = (JwtResponse) authService.jwtFromJsonString(authService.sendSignInRequest(loginUser));
+                            JwtResponse jwtResponse = (JwtResponse) authService.
+                                    jwtFromJsonString(authService.sendSignInRequest(loginUser));
                             String tasks = taskService.sendShowTasksRequest(jwtResponse);
                             if (tasks.equals("[]")) {
-                                sendMessage(chatId, EMessage.EMPTY_LIST_MESSAGE.getMessage()) ;
+                                sendMessage(messageChatId, EMessage.EMPTY_LIST_MESSAGE.getMessage());
                             } else {
-                                sendMessage(chatId,taskService.tasksFromJsonString(tasks, chatId));
+                                sendMessage(messageChatId, taskService.tasksFromJsonString(tasks, messageChatId));
                             }
-                            sendMessage(chatId, EMessage.RETURN_MESSAGE.getMessage() +
+                            sendMessage(messageChatId, EMessage.RETURN_MESSAGE.getMessage() +
                                     ECommand.RETURN.getCommand());
                             botState = BotState.IN_ACCOUNT;
                         } catch (IOException e) {
@@ -134,23 +121,29 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 }
                 case CREATE -> {
                     TaskRequest taskRequest = new TaskRequest();
-                    taskRequest.setData(text);
+                    taskRequest.setData(messageText);
                     try {
-                        JwtResponse jwtResponse = (JwtResponse) authService.jwtFromJsonString(authService.sendSignInRequest(loginUser));
-                        String token = jwtResponse.getAccessToken();
-//                        sendCreateTaskRequest(token, taskRequest);
-                        taskService.sendCreateTaskRequest(token, taskRequest);
+                        JwtResponse jwtResponse = (JwtResponse) authService
+                                .jwtFromJsonString(authService.sendSignInRequest(loginUser));
+                        taskService.sendCreateTaskRequest(jwtResponse.getAccessToken(), taskRequest);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    sendMessage(chatId, EMessage.TASK_CREATED_MESSAGE.getMessage());
-                    sendMessage(chatId, EMessage.RETURN_MESSAGE.getMessage() +
+                    sendMessage(messageChatId, EMessage.TASK_CREATED_MESSAGE.getMessage());
+                    sendMessage(messageChatId, EMessage.RETURN_MESSAGE.getMessage() +
                             ECommand.RETURN.getCommand());
                     botState = BotState.IN_ACCOUNT;
                 }
             }
         }
 
+    }
+
+    public void handleMenu(long messageChatId) {
+        sendMessage(messageChatId,
+                EMessage.LOGIN_IN_ACCOUNT_WITH_MESSAGE.getMessage()
+                        + ECommand.LOGIN.getCommand());
+        botState = BotState.LOGIN;
     }
 
     public void sendMessage(long chatId, String textToSend) {
@@ -164,6 +157,18 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    public void initCommands() {
+        List<BotCommand> listOfCommands = new ArrayList<>();
+        listOfCommands.add(new BotCommand(ECommand.START.getCommand(),
+                EMessage.INFO_START_MESSAGE.getMessage()));
+        try {
+            this.execute(new SetMyCommands(listOfCommands,
+                    new BotCommandScopeDefault(), null));
+        } catch (TelegramApiException E) {
+            E.printStackTrace();
+        }
+    }
+
     @Override
     public String getBotUsername() {
         return "kookacreq_bot";
@@ -171,7 +176,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "6046387088:AAF-PH46m_7khQ6_3N9E4QQp2FUjWC9TLYQ";
+        return "6046387088:AAHvYJUeaHscfQ70n6Vqkolb4M8qrGHGbh8";
     }
 
 }
