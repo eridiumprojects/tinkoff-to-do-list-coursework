@@ -4,7 +4,6 @@ import com.example.telegram.model.dto.request.TaskRequest;
 import com.example.telegram.model.dto.response.JwtResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;

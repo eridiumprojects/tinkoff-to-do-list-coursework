@@ -171,12 +171,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "kookacreq_bot";
+        return "your_bot";
     }
 
     @Override
     public String getBotToken() {
-        return "6046387088:AAHvYJUeaHscfQ70n6Vqkolb4M8qrGHGbh8";
+        return "your_token";
     }
 
 }
