@@ -8,7 +8,10 @@ import com.example.telegram.model.enums.ECommand;
 import com.example.telegram.model.enums.EMessage;
 import com.example.telegram.model.enums.LoginState;
 import com.example.telegram.service.AuthService;
+import com.example.telegram.service.BotService;
 import com.example.telegram.service.TaskService;
+import org.apache.http.HttpStatus;
+import org.json.HTTP;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -28,13 +31,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private BotState botState;
     public final TaskService taskService;
     public final AuthService authService;
+    public BotService botService;
     public LoginRequest loginUser;
 
+
     public MyTelegramBot(TaskService taskService, AuthService authService) {
+        initCommands();
         this.taskService = taskService;
         this.authService = authService;
+        this.botService = new BotService(authService, taskService);
         this.loginUser = new LoginRequest();
-        initCommands();
         currentState = LoginState.ASK_USERNAME;
         botState = BotState.AFK;
     }
@@ -48,7 +54,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 botState = BotState.MENU;
             }
             switch (botState) {
-                case MENU -> handleMenu(messageChatId);
+                case MENU -> {
+                    sendMessage(messageChatId,
+                            EMessage.LOGIN_IN_ACCOUNT_WITH_MESSAGE.getMessage()
+                                    + ECommand.LOGIN.getCommand());
+                    botState = BotState.LOGIN;
+                }
                 case LOGIN -> {
                     switch (currentState) {
                         case ASK_USERNAME -> {
@@ -68,12 +79,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                             loginUser.setPassword(messageText);
                             try {
                                 authService.sendSignInRequest(loginUser);
-                                if (authService.getStatusCode() == 401) {
+                                if (authService.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
                                     sendMessage(messageChatId, EMessage.INVALID_DATA_MESSAGE.getMessage());
                                     botState = BotState.MENU;
                                     currentState = LoginState.ASK_USERNAME;
                                 }
-                                if (authService.getStatusCode() == 200) {
+                                if (authService.getStatusCode() == HttpStatus.SC_OK) {
                                     sendMessage(messageChatId, EMessage.SUCCESSFULLY_LOGGED_MESSAGE.getMessage());
                                     sendMessage(messageChatId, EMessage.NEXT_ACTS_MESSAGE.getMessage() +
                                             ECommand.RUN.getCommand());
@@ -109,7 +120,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                             if (tasks.equals("[]")) {
                                 sendMessage(messageChatId, EMessage.EMPTY_LIST_MESSAGE.getMessage());
                             } else {
-                                sendMessage(messageChatId, taskService.tasksFromJsonString(tasks, messageChatId));
+                                sendMessage(messageChatId, taskService.tasksFromJsonString(tasks));
                             }
                             sendMessage(messageChatId, EMessage.RETURN_MESSAGE.getMessage() +
                                     ECommand.RETURN.getCommand());
@@ -137,13 +148,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             }
         }
 
-    }
-
-    public void handleMenu(long messageChatId) {
-        sendMessage(messageChatId,
-                EMessage.LOGIN_IN_ACCOUNT_WITH_MESSAGE.getMessage()
-                        + ECommand.LOGIN.getCommand());
-        botState = BotState.LOGIN;
     }
 
     public void sendMessage(long chatId, String textToSend) {
