@@ -1,2 +1,7 @@
 server:
   port: 9097
+
+tg:
+  bot:
+    name: kookacreq_bot
+    token: 6046387088:AAHCt3MhVs9FgLRSUIvQ7Oly_FCxKGKBksc

@@ -5,7 +5,6 @@ import com.example.telegram.model.dto.response.JwtResponse;
 import com.example.telegram.util.RequestBuilder;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
