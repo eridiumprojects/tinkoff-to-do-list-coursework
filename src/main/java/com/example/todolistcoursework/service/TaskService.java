@@ -1,7 +1,8 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.dto.FilterRequest;
-import com.example.todolistcoursework.model.dto.TaskDto;
+import com.example.todolistcoursework.builder.TaskMapper;
+import com.example.todolistcoursework.model.dto.request.FilterRequest;
+import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
@@ -30,70 +31,72 @@ public class TaskService {
         return user.get();
     }
 
-    public Task createTask(Long userId, Task task) {
+    public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
+        task.setCreated(task.getCreated());
         taskRepository.save(task);
-        return task;
+        return TaskMapper.toApi(task);
     }
 
-    public Task getTask(Long userId, Long id) {
+    public TaskInfo getTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
-            return task.get();
+            return TaskMapper.toApi(task.get());
         } else {
             throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
-    public List<Task> getTasks(Long userId) {
+    public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
-        return user.getTasks().stream().toList();
+        return user.getTasks().stream().map(TaskMapper::toApi).toList();
     }
 
-    public Task updateTask(Long userId, TaskDto taskDto) {
-        Optional<Task> task = taskRepository.findById(taskDto.getId());
+    public TaskInfo updateTask(Long userId, Task request) {
+        Optional<Task> task = taskRepository.findById(request.getId());
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             Task existingTask = task.get();
-            existingTask.setData(taskDto.getData());
+            existingTask.setData(request.getData());
             existingTask.setModified(LocalDateTime.now());
             taskRepository.save(existingTask);
-            return existingTask;
+            return TaskMapper.toApi(existingTask);
         } else {
             throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
-    public void deleteTask(Long userId, Long id) {
+    public TaskInfo deleteTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             taskRepository.deleteById(id);
+            return TaskMapper.toApi(task.get());
         } else {
             throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
-    public Task tickTask(Long userId, Long id) {
+    public TaskInfo tickTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             Task existingTask = task.get();
             existingTask.tick();
             taskRepository.save(existingTask);
-            return existingTask;
+            return TaskMapper.toApi(existingTask);
         } else {
             throw new ObjectNotFoundException("Error: This user does not have such task");
         }
     }
 
-    public List<Task> filterTasks(Long userId, FilterRequest filterRequest) {
+    public List<TaskInfo> filterTasks(Long userId, FilterRequest filterRequest) {
         return TaskFilter.filter(filterRequest, getUser(userId).getTasks().stream().toList());
     }
 
-    public List<Task> getActualTasks(Long userId) {
-        return getUser(userId).getTasks().stream().filter(a -> !a.isCheckbox()).toList();
+    public List<TaskInfo> getActualTasks(Long userId) {
+        return getUser(userId).getTasks().stream().filter(a -> !a.isCheckbox()).map(TaskMapper::toApi).toList();
     }
 
-    public List<Task> getCompletedTasks(Long userId) {
-        return getUser(userId).getTasks().stream().filter(Task::isCheckbox).toList();
+    public List<TaskInfo> getCompletedTasks(Long userId) {
+        return getUser(userId).getTasks().stream().filter(Task::isCheckbox).map(TaskMapper::toApi).toList();
     }
 }

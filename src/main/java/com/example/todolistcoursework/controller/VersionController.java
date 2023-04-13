@@ -1,6 +1,6 @@
 package com.example.todolistcoursework.controller;
 
-import com.example.todolistcoursework.model.dto.CurrentVersionResponse;
+import com.example.todolistcoursework.model.dto.response.CurrentVersionResponse;
 import com.example.todolistcoursework.util.PropertiesReader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

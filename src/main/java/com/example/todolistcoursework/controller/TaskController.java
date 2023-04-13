@@ -1,14 +1,16 @@
 package com.example.todolistcoursework.controller;
 
-import com.example.todolistcoursework.model.dto.FilterRequest;
-import com.example.todolistcoursework.model.dto.TaskDto;
-import com.example.todolistcoursework.model.entity.Task;
+import com.example.todolistcoursework.model.dto.request.CreateTaskRequest;
+import com.example.todolistcoursework.model.dto.request.FilterRequest;
+import com.example.todolistcoursework.model.dto.request.UpdateTaskRequest;
+import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.TaskService;
 import com.example.todolistcoursework.builder.TaskMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,47 +24,47 @@ public class TaskController {
     private final AuthService authService;
 
     @PostMapping("/create")
-    public Task createTask(@Valid @RequestBody TaskDto taskDto) {
-        return taskService.createTask(authService.getJwtAuth().getUserId(), TaskMapper.toApi(taskDto));
+    public ResponseEntity<TaskInfo> createTask(@Valid @RequestBody CreateTaskRequest request) {
+        return ResponseEntity.ok(taskService.createTask(authService.getJwtAuth().getUserId(), TaskMapper.toModel(request)));
     }
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable Long id) {
-        return taskService.getTask(authService.getJwtAuth().getUserId(), id);
+    public ResponseEntity<TaskInfo> getTask(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTask(authService.getJwtAuth().getUserId(), id));
     }
 
     @PutMapping("/update")
-    public Task updateTask(@Valid @RequestBody TaskDto taskDto) {
-        return taskService.updateTask(authService.getJwtAuth().getUserId(), taskDto);
+    public ResponseEntity<TaskInfo> updateTask(@Valid @RequestBody UpdateTaskRequest request) {
+        return ResponseEntity.ok(taskService.updateTask(authService.getJwtAuth().getUserId(), TaskMapper.toModel(request)));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(authService.getJwtAuth().getUserId(), id);
+    public ResponseEntity<TaskInfo> deleteTask(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.deleteTask(authService.getJwtAuth().getUserId(), id));
     }
 
     @GetMapping("/list")
-    public List<Task> getTasks() {
-        return taskService.getTasks(authService.getJwtAuth().getUserId());
+    public ResponseEntity<List<TaskInfo>> getTasks() {
+        return ResponseEntity.ok(taskService.getTasks(authService.getJwtAuth().getUserId()));
     }
 
     @PutMapping(value = "/tick/{id}")
-    public Task tickTask(@PathVariable Long id) {
-        return taskService.tickTask(authService.getJwtAuth().getUserId(), id);
+    public ResponseEntity<TaskInfo> tickTask(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.tickTask(authService.getJwtAuth().getUserId(), id));
     }
 
     @GetMapping(value = "/filter")
-    public List<Task> searchTasks(@RequestBody FilterRequest filterRequest) {
-        return taskService.filterTasks(authService.getJwtAuth().getUserId(), filterRequest);
+    public ResponseEntity<List<TaskInfo>> searchTasks(@RequestBody FilterRequest filterRequest) {
+        return ResponseEntity.ok(taskService.filterTasks(authService.getJwtAuth().getUserId(), filterRequest));
     }
 
     @GetMapping(value = "/actual")
-    public List<Task> getActualTasks() {
-        return taskService.getActualTasks(authService.getJwtAuth().getUserId());
+    public ResponseEntity<List<TaskInfo>> getActualTasks() {
+        return ResponseEntity.ok(taskService.getActualTasks(authService.getJwtAuth().getUserId()));
     }
 
     @GetMapping(value = "/completed")
-    public List<Task> getCompletedTasks() {
-        return taskService.getCompletedTasks(authService.getJwtAuth().getUserId());
+    public ResponseEntity<List<TaskInfo>> getCompletedTasks() {
+        return ResponseEntity.ok(taskService.getCompletedTasks(authService.getJwtAuth().getUserId()));
     }
 }
