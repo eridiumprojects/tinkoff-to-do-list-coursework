@@ -4,4 +4,5 @@ server:
 tg:
   bot:
     name: kookacreq_bot
-    token: 6046387088:AAHCt3MhVs9FgLRSUIvQ7Oly_FCxKGKBksc
+    token: 6046387088:AAG08iWjPP5yEfv7j7O1o5wUlUo1WlUtSxw
+    url: http://localhost:8080/api

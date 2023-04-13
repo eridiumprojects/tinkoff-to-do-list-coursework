@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,8 +17,8 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class RequestBuilder {
-    private static final String URL = "http://localhost:8080/api";
-
+    @Value("${tg.bot.url}")
+    private String URL;
     public CloseableHttpResponse postCreatingHttpResponse(CloseableHttpClient client
             , Object object, String path, String token) throws IOException {
         Charset charset = StandardCharsets.UTF_8;
@@ -40,6 +41,4 @@ public class RequestBuilder {
         httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         return client.execute(httpGet);
     }
-
-
 }
