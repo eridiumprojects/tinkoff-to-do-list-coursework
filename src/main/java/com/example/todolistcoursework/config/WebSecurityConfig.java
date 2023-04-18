@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,7 +31,9 @@ public class WebSecurityConfig {
 
     private static final String[] publicUrls = new String[]{
             "/auth/**",
-            "/version"
+            "/version",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
     };
     private final AuthTokenFilter jwtFilter;
     private final ObjectMapper objectMapper;
@@ -70,7 +73,7 @@ public class WebSecurityConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins("*");
             }
         };
