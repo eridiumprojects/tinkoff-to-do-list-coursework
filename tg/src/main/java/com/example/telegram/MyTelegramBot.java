@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class MyTelegramBot extends TelegramLongPollingBot {
 
@@ -25,6 +29,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     @Value("${tg.bot.name")
     private String username;
 
+//    Map<Long, BotState> map = new HashMap<>();
+
 
     public MyTelegramBot(TaskService taskService, AuthService authService) {
         this.taskService = taskService;
@@ -35,6 +41,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         botState = BotState.AFK;
     }
 
+
+    //TODO разобраться с командой signout, пофиксить баги
+    //TODO прикрепить редис и автоматическую авторизацию
     @Override
     public void onUpdateReceived(Update update) {
         long messageChatId = update.getMessage().getChatId();

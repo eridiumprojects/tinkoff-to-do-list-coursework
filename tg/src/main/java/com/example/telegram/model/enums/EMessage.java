@@ -10,12 +10,14 @@ public enum EMessage {
     SUCCESSFULLY_LOGGED_MESSAGE("Вы успешно вошли в аккаунт!"),
     IN_ACCOUNT_FIRST_MESSAGE("Приступим к планированию!\n" +
             "Вы можете создать новый таск с помощью команды "),
-    IN_ACCOUNT_SECOND_MESSAGE("\nИли же посмотреть список всех тасков с помощью команды "),
+    IN_ACCOUNT_SECOND_MESSAGE("\nТакже вы можете посмотреть список всех тасков с помощью команды "),
+    IN_ACCOUNT_THIRD_MESSAGE("\nИли выйти из аккаунта с помощью "),
     NEXT_ACTS_MESSAGE("Для дальнейших действий используйте команду "),
     INPUT_TASK_DATA_MESSAGE("Введите название новой таски:"),
     RETURN_MESSAGE("Для выхода в главное меню используйте команду "),
     TASK_CREATED_MESSAGE("Задание успешно создано!"),
-    EMPTY_LIST_MESSAGE("Ваш список заданий пуст");
+    EMPTY_LIST_MESSAGE("Ваш список заданий пуст"),
+    SIGNOUT_MESSAGE("Вы успешно вышли из аккаунта!");
     private String message;
 
 

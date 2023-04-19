@@ -17,10 +17,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Getter
@@ -33,6 +36,9 @@ public class BotService {
     private TelegramLongPollingBot bot;
     public LoginRequest loginUser;
 
+    Map<Long, BotState> map = new HashMap<>();
+    Jedis jedis = new Jedis("localhost",6379);
+
 
     public BotService(TelegramLongPollingBot bot) {
         this.bot = bot;
@@ -40,6 +46,7 @@ public class BotService {
         this.loginUser = new LoginRequest();
         this.authService = new AuthService(new RequestBuilder());
         this.taskService = new TaskService(new RequestBuilder());
+        jedis.connect();
     }
 
     public void handleMenuState(long messageChatId) {
@@ -58,11 +65,16 @@ public class BotService {
     }
 
     public void processAskUsername(long messageChatId, String messageText) {
-        if (messageText.equals(ECommand.LOGIN.getCommand())) {
-            sendMessage(messageChatId, EMessage.INPUT_USERNAME_MESSAGE.getMessage());
-            currentState = LoginState.ASK_PASSWORD;
+        if (map.containsKey(messageChatId) && map.containsValue(BotState.IN_ACCOUNT)) {
+            sendMessage(messageChatId, "Вы уже авторизованы в аккаунт");
+            botState = BotState.IN_ACCOUNT;
         } else {
-            sendMessage(messageChatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
+            if (messageText.equals(ECommand.LOGIN.getCommand())) {
+                sendMessage(messageChatId, EMessage.INPUT_USERNAME_MESSAGE.getMessage());
+                currentState = LoginState.ASK_PASSWORD;
+            } else {
+                sendMessage(messageChatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
+            }
         }
     }
 
@@ -82,6 +94,9 @@ public class BotService {
                 currentState = LoginState.ASK_USERNAME;
             }
             if (authService.getStatusCode() == HttpStatus.SC_OK) {
+                map.put(messageChatId, BotState.IN_ACCOUNT);
+                jedis.set("chatId",String.valueOf(messageChatId));
+                jedis.set("userState", BotState.IN_ACCOUNT.toString());
                 sendMessage(messageChatId, EMessage.SUCCESSFULLY_LOGGED_MESSAGE.getMessage());
                 sendMessage(messageChatId, EMessage.NEXT_ACTS_MESSAGE.getMessage() +
                         ECommand.RUN.getCommand());
@@ -98,7 +113,9 @@ public class BotService {
             sendMessage(messageChatId, EMessage.IN_ACCOUNT_FIRST_MESSAGE.getMessage() +
                     ECommand.CREATE.getCommand() +
                     EMessage.IN_ACCOUNT_SECOND_MESSAGE.getMessage() +
-                    ECommand.SHOW.getCommand());
+                    ECommand.SHOW.getCommand() +
+                    EMessage.IN_ACCOUNT_THIRD_MESSAGE.getMessage() +
+                    ECommand.SIGNOUT.getCommand());
             botState = BotState.NEXT;
         } else {
             sendMessage(messageChatId, EMessage.INVALID_COMMAND_MESSAGE.getMessage());
@@ -124,6 +141,10 @@ public class BotService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else if (messageText.equals(ECommand.SIGNOUT.getCommand())) {
+            sendMessage(messageChatId, EMessage.SIGNOUT_MESSAGE.getMessage());
+            map.remove(messageChatId);
+            botState = BotState.MENU;
         }
     }
 
