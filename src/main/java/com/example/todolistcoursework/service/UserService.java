@@ -11,13 +11,13 @@ import com.example.todolistcoursework.model.entity.Role;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import com.example.todolistcoursework.model.exception.AuthException;
+import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
 import com.example.todolistcoursework.repository.DeviceRepository;
 import com.example.todolistcoursework.repository.RefreshTokenRepository;
 import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +39,7 @@ public class UserService {
 
     public JwtResponse loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new AuthException("User doesn't exist"));
+                .orElseThrow(() -> new AuthException("Error: User doesn't exist"));
 
         if (user.getPassword() != null && !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new AuthException("Error: Invalid password");
@@ -77,13 +77,13 @@ public class UserService {
                 user.getRoles().stream().map(e -> e.getName().getAuthority()).toList());
     }
 
-    public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
+    public UserInfoResponse registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            return ResponseEntity.badRequest().body("Error: Username is already taken!");
+            throw new ObjectAlreadyExists("Error: Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+            throw new ObjectAlreadyExists("Error: Email is already in use!");
         }
 
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(),
@@ -97,15 +97,15 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
         roles.add(userRole);
         user.setRoles(roles);
-        userRepository.save(user);
+        var registeredUser = userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully!");
+        return UserMapper.toApi(registeredUser);
     }
 
     public UserInfoResponse getUserInfo(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new AuthException("User doesn't exists");
+            throw new AuthException("Error: User doesn't exists");
         }
         return UserMapper.toApi(user.get());
     }
@@ -113,7 +113,7 @@ public class UserService {
     public UserInfoResponse deleteUser(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new AuthException("User doesn't exists");
+            throw new AuthException("Error: User doesn't exists");
         }
         userRepository.deleteById(userId);
         return UserMapper.toApi(user.get());
