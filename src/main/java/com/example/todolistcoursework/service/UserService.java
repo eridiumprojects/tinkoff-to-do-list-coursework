@@ -18,7 +18,6 @@ import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +77,7 @@ public class UserService {
                 user.getRoles().stream().map(e -> e.getName().getAuthority()).toList());
     }
 
-    public ResponseEntity<?> registerUser(SignupRequest signupRequest) {
+    public UserInfoResponse registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
             throw new ObjectAlreadyExists("Error: Username is already taken!");
         }
@@ -98,9 +97,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
         roles.add(userRole);
         user.setRoles(roles);
-        userRepository.save(user);
+        var registeredUser = userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully!");
+        return UserMapper.toApi(registeredUser);
     }
 
     public UserInfoResponse getUserInfo(Long userId) {
