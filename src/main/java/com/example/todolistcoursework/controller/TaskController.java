@@ -29,16 +29,21 @@ public class TaskController {
     private final AuthService authService;
 
     @Operation(summary = "Create a new task", responses = {
-            @ApiResponse(responseCode = "200", description = "Task created successfully", content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = TaskInfo.class))),
+            @ApiResponse(responseCode = "200", description = "Task created successfully"
+                    , content = @io.swagger.v3.oas.annotations.media.Content
+                    (schema = @Schema(implementation = TaskInfo.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
     @PostMapping("/create")
     public ResponseEntity<TaskInfo> createTask(@Valid @RequestBody CreateTaskRequest request) {
-        return ResponseEntity.ok(taskService.createTask(authService.getJwtAuth().getUserId(), TaskMapper.toModel(request)));
+        return ResponseEntity.ok
+                (taskService.createTask(authService.getJwtAuth().getUserId(), TaskMapper.toModel(request)));
     }
 
     @Operation(summary = "Get task by ID", responses = {
-            @ApiResponse(responseCode = "200", description = "Task retrieved successfully", content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = TaskInfo.class))),
+            @ApiResponse(responseCode = "200", description = "Task received successfully"
+                    , content = @io.swagger.v3.oas.annotations.media.Content
+                    (schema = @Schema(implementation = TaskInfo.class))),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @GetMapping("/{id}")
@@ -59,7 +64,8 @@ public class TaskController {
 
     @Operation(summary = "Delete task by ID", responses = {
             @ApiResponse(responseCode = "200", description = "Task deleted successfully",
-                    content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = TaskInfo.class))),
+                    content = @io.swagger.v3.oas.annotations.media.Content
+                            (schema = @Schema(implementation = TaskInfo.class))),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @DeleteMapping("/{id}")
@@ -69,7 +75,8 @@ public class TaskController {
 
     @Operation(summary = "Get list of tasks", responses = {
             @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully",
-                    content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = List.class)))
+                    content = @io.swagger.v3.oas.annotations.media.Content
+                            (schema = @Schema(implementation = List.class)))
     })
     @GetMapping("/list")
     public ResponseEntity<List<TaskInfo>> getTasks() {
@@ -78,7 +85,8 @@ public class TaskController {
 
     @Operation(summary = "Tick a task by ID", responses = {
             @ApiResponse(responseCode = "200", description = "Task ticked successfully",
-                    content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = TaskInfo.class))),
+                    content = @io.swagger.v3.oas.annotations.media.Content
+                            (schema = @Schema(implementation = TaskInfo.class))),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @PutMapping(value = "/tick/{id}")
@@ -88,7 +96,8 @@ public class TaskController {
 
     @Operation(summary = "Filter tasks by criteria", responses = {
             @ApiResponse(responseCode = "200", description = "Tasks filtered successfully",
-                    content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = List.class)))
+                    content = @io.swagger.v3.oas.annotations.media.Content
+                            (schema = @Schema(implementation = List.class)))
     })
     @GetMapping(value = "/filter")
     public ResponseEntity<List<TaskInfo>> searchTasks(@Valid @RequestBody FilterRequest filterRequest) {
@@ -108,7 +117,8 @@ public class TaskController {
 
     @Operation(summary = "Get list of completed tasks", responses = {
             @ApiResponse(responseCode = "200", description = "Completed tasks retrieved successfully",
-                    content = @io.swagger.v3.oas.annotations.media.Content(schema = @Schema(implementation = List.class)))
+                    content = @io.swagger.v3.oas.annotations.media.Content
+                            (schema = @Schema(implementation = List.class)))
     })
     @GetMapping(value = "/completed")
     public ResponseEntity<List<TaskInfo>> getCompletedTasks() {

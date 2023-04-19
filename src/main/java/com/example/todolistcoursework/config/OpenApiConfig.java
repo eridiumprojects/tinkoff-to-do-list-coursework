@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("My API Documentation")
+                        .title("Tinkoff Coursework TO-DO-List API")
                         .version("1.0")
-                        .description("Documentation for my API"));
+                        .description("Documentation"));
     }
 }
