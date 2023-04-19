@@ -4,11 +4,11 @@ import com.example.todolistcoursework.model.exception.AuthException;
 import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
 import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
 import com.example.todolistcoursework.security.ErrorInfo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,11 +23,11 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     @Nullable
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex,
+            @NonNull Exception ex,
             @Nullable Object body,
-            HttpHeaders headers,
-            HttpStatusCode statusCode,
-            WebRequest request
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode statusCode,
+            @NonNull WebRequest request
     ) {
         logger.warn(ex.getMessage(), ex);
 
