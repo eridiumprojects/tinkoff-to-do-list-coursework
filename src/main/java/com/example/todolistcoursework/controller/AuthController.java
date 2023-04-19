@@ -35,17 +35,17 @@ public class AuthController {
 
     @Operation(summary = "Refresh an access token")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Access token refreshed successfully"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = RefreshResponse.class)
-                    )
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Access token refreshed successfully",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = RefreshResponse.class))
             )),
-            @ApiResponse(responseCode = "409", description = "Invalid refresh token"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = AuthException.class)
-                    )
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Invalid refresh token",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
             )
             )})
     @PostMapping("/refresh")
@@ -56,17 +56,17 @@ public class AuthController {
 
     @Operation(summary = "User authentication")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User authenticated successfully"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = JwtResponse.class)
-                    )
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User authenticated successfully",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = JwtResponse.class))
             )),
-            @ApiResponse(responseCode = "409", description = "Invalid username or password"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = AuthException.class)
-                    )
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Invalid username or password",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
             )
             )})
     @PostMapping("/signin")
@@ -77,17 +77,17 @@ public class AuthController {
 
     @Operation(summary = "User registration")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User registered successfully"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = User.class)
-                    )
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User registered successfully",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = User.class))
             )),
-            @ApiResponse(responseCode = "409", description = "Username or email already exists"
-                    , content = @Content(
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = ObjectAlreadyExists.class)
-                    )
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Username or email already exists",
+                    content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = ObjectAlreadyExists.class))
             )
             )})
     @PostMapping("/signup")
