@@ -24,7 +24,7 @@ public class VersionController {
     }
 
     @Operation(summary = "Get current version of the application", responses = {
-            @ApiResponse(responseCode = "200", description = "Current version retrieved successfully")
+            @ApiResponse(responseCode = "200", description = "Current version received successfully")
     })
     @GetMapping("/version")
     public ResponseEntity<CurrentVersionResponse> getCurrentVersion() {
