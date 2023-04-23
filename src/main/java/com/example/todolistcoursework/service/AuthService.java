@@ -52,8 +52,8 @@ public class AuthService {
             throw new AuthException("Error: Refresh token doesn't exist");
         }
 
-        if (jwtService.validateAccessTokenLifetime(device.getId())) {
-            refreshTokenRepository.deleteById(currentRefreshToken.get().getId());
+        refreshTokenRepository.deleteById(currentRefreshToken.get().getId());
+        if (!jwtService.validateAccessTokenLifetime(device.getId())) {
             throw new AuthException("We found a suspicious activity on your account. Please, log in again");
         }
 
