@@ -18,6 +18,7 @@ import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +116,9 @@ public class UserService {
         if (user.isEmpty()) {
             throw new AuthException("Error: User doesn't exists");
         }
+        Hibernate.initialize(user.get().getTasks());
+        Hibernate.initialize(user.get().getDevices());
+        Hibernate.initialize(user.get().getTokens());
         userRepository.deleteById(userId);
         return UserMapper.toApi(user.get());
     }
