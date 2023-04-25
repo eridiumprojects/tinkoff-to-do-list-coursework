@@ -42,7 +42,7 @@ security:
     storage: accessTokens
     access:
       secret: access
-      expiration: 30m
+      expiration: 10m
     refresh:
       secret: refresh
       expiration: 168h
