@@ -15,5 +15,5 @@ import java.time.LocalDateTime;
 public class CreateTaskRequest {
     String data;
     LocalDateTime deadline;
-    String timezone;
+    String description;
 }

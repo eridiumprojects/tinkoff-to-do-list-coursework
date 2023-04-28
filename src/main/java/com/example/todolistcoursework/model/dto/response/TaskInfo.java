@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.model.dto.response;
 
+import com.example.todolistcoursework.model.enums.TaskStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,6 @@ public class TaskInfo {
     String data;
     LocalDateTime deadline;
     Boolean checkbox;
+    TaskStatus status;
+    String description;
 }

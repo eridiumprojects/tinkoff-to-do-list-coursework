@@ -5,12 +5,19 @@ import com.example.todolistcoursework.model.dto.request.FilterRequest;
 import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.enums.SortOrder;
+import com.example.todolistcoursework.model.enums.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class TaskFilter {
+    private static final Map<TaskStatus, Integer> priorities = Map.of(
+            TaskStatus.BACKLOG, 4,
+            TaskStatus.TODO, 3,
+            TaskStatus.IN_PROGRESS, 2,
+            TaskStatus.DONE, 1);
     public static List<TaskInfo> filter(FilterRequest filterRequest, List<Task> tasks) {
         if (filterRequest.getOrders() != null)
             for (var el : filterRequest.getOrders())
@@ -39,7 +46,9 @@ public class TaskFilter {
                                 Comparator.nullsLast(Comparator.naturalOrder()))).toList();
             }
             case COMPLETED -> {
-                return tasks.stream().sorted(Comparator.comparing(Task::isCheckbox)).toList();
+                return tasks.stream()
+                        .sorted(Comparator.comparingInt(a -> priorities.get(a.getStatus())))
+                        .toList();
             }
             case ALPHABET_DESC -> {
                 return tasks
@@ -55,7 +64,11 @@ public class TaskFilter {
                         .toList();
             }
             case COMPLETED_DESC -> {
-                return tasks.stream().sorted(Comparator.comparing(Task::isCheckbox).reversed()).toList();
+                return tasks.stream()
+                        .sorted((a, b) -> Integer.compare(
+                                priorities.get(b.getStatus()),
+                                priorities.get(a.getStatus())
+                        )).toList();
             }
         }
         return new ArrayList<>();

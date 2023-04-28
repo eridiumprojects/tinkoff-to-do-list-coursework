@@ -105,23 +105,6 @@ public class TaskController {
     public ResponseEntity<List<TaskInfo>> getTasks() {
         return ResponseEntity.ok(taskService.getTasks(authService.getJwtAuth().getUserId()));
     }
-
-    @Operation(
-            summary = "Tick a task by ID",
-            responses = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Task ticked successfully",
-                    content = @Content(schema = @Schema(implementation = TaskInfo.class))),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Task not found")
-    })
-    @PutMapping(value = "/tick/{id}")
-    public ResponseEntity<TaskInfo> tickTask(@Parameter(description = "Task ID") @PathVariable Long id) {
-        return ResponseEntity.ok(taskService.tickTask(authService.getJwtAuth().getUserId(), id));
-    }
-
     @Operation(
             summary = "Filter tasks by criteria",
             responses = {

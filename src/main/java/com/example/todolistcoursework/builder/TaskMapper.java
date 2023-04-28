@@ -4,6 +4,7 @@ import com.example.todolistcoursework.model.dto.request.CreateTaskRequest;
 import com.example.todolistcoursework.model.dto.request.UpdateTaskRequest;
 import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
+import com.example.todolistcoursework.model.enums.TaskStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,24 +18,28 @@ public class TaskMapper {
         return Task.builder()
                 .data(request.getData())
                 .created(LocalDateTime.now())
-                .checkbox(false)
                 .modified(LocalDateTime.now())
+                .status(TaskStatus.BACKLOG)
+                .description(request.getDescription())
                 .build();
     }
 
     public static Task toModel(UpdateTaskRequest request) {
         return Task.builder()
                 .data(request.getData())
-                .checkbox(false)
+                .status(request.getStatus())
+                .description(request.getDescription())
                 .id(request.getId())
+                .modified(LocalDateTime.now())
                 .build();
     }
 
     public static TaskInfo toApi(Task task) {
         return TaskInfo.builder()
                 .deadline(task.getDeadline())
-                .checkbox(task.isCheckbox())
                 .id(task.getId())
+                .description(task.getDescription())
+                .status(task.getStatus())
                 .data(task.getData())
                 .build();
     }

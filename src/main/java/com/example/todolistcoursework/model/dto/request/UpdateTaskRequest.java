@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.model.dto.request;
 
+import com.example.todolistcoursework.model.enums.TaskStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 public class UpdateTaskRequest {
     String data;
     LocalDateTime deadline;
-    String timezone;
     Long id;
+    String description;
+    TaskStatus status;
 }
