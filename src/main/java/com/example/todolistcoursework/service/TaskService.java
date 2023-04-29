@@ -11,6 +11,7 @@ import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -51,6 +52,7 @@ public class TaskService {
 
     public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
+        Hibernate.initialize(user.getTasks());
         return user.getTasks().stream().map(TaskMapper::toApi).toList();
     }
 
@@ -78,18 +80,24 @@ public class TaskService {
     }
 
     public List<TaskInfo> filterTasks(Long userId, FilterRequest filterRequest) {
-        return TaskFilter.filter(filterRequest, getUser(userId).getTasks().stream().toList());
+        var user = getUser(userId);
+        Hibernate.initialize(user.getTasks());
+        return TaskFilter.filter(filterRequest, user.getTasks().stream().toList());
     }
 
     public List<TaskInfo> getActualTasks(Long userId) {
-        return getUser(userId).getTasks().stream()
+        var user = getUser(userId);
+        Hibernate.initialize(user.getTasks());
+        return user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.IN_PROGRESS) || a.getStatus().equals(TaskStatus.TODO))
                 .map(TaskMapper::toApi)
                 .toList();
     }
 
     public List<TaskInfo> getCompletedTasks(Long userId) {
-        return getUser(userId).getTasks().stream()
+        var user = getUser(userId);
+        Hibernate.initialize(user.getTasks());
+        return user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.DONE))
                 .map(TaskMapper::toApi)
                 .toList();

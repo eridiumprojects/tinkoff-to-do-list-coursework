@@ -116,7 +116,6 @@ public class UserService {
         if (user.isEmpty()) {
             throw new AuthException("Error: User doesn't exists");
         }
-        Hibernate.initialize(user.get().getTasks());
         Hibernate.initialize(user.get().getDevices());
         Hibernate.initialize(user.get().getTokens());
         userRepository.deleteById(userId);

@@ -13,10 +13,10 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@Entity(name = "task")
-@Table(name = "tasks")
+@Table(name = "task")
 @Builder
 @AllArgsConstructor
+@Entity
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
