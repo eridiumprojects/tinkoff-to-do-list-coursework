@@ -15,6 +15,7 @@ import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,10 @@ public class TaskService {
 
     public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
-        return user.getTasks().stream().map(TaskMapper::toApi).toList();
+        return user.getTasks().stream()
+                .sorted(Comparator.comparing(Task::getCreated))
+                .sorted(Comparator.comparing(Task::getStatus))
+                .map(TaskMapper::toApi).toList();
     }
 
     public TaskInfo updateTask(Long userId, Task request) {
