@@ -54,7 +54,7 @@ public class TaskService {
     public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
         return user.getTasks().stream()
-                .sorted(Comparator.comparing(Task::getCreated))
+                .sorted(Comparator.comparing(Task::getCreated).reversed())
                 .sorted(Comparator.comparing(Task::getStatus))
                 .map(TaskMapper::toApi).toList();
     }
