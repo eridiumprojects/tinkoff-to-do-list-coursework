@@ -8,10 +8,10 @@ public enum TaskStatus {
     IN_PROGRESS("in progress"),
     DONE("done");
     public static final Map<TaskStatus, Integer> priorities = Map.of(
-            TaskStatus.BACKLOG, 4,
-            TaskStatus.TODO, 3,
-            TaskStatus.IN_PROGRESS, 2,
-            TaskStatus.DONE, 1);
+            TaskStatus.BACKLOG, 3,
+            TaskStatus.TODO, 2,
+            TaskStatus.IN_PROGRESS, 1,
+            TaskStatus.DONE, 4);
 
     final String status;
     TaskStatus(String status) {

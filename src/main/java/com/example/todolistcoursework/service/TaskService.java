@@ -65,8 +65,10 @@ public class TaskService {
             Task existingTask = task.get();
             existingTask.setData(request.getData());
             existingTask.setModified(LocalDateTime.now());
-            taskRepository.save(existingTask);
-            return TaskMapper.toApi(existingTask);
+            existingTask.setDescription(request.getDescription());
+            existingTask.setStatus(request.getStatus());
+            var result = taskRepository.save(existingTask);
+            return TaskMapper.toApi(result);
         } else {
             throw new ObjectNotFoundException("Error: This user does not have such task");
         }
