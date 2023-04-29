@@ -52,7 +52,6 @@ public class TaskService {
 
     public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
-        Hibernate.initialize(user.getTasks());
         return user.getTasks().stream().map(TaskMapper::toApi).toList();
     }
 

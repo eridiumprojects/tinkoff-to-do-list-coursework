@@ -1,9 +1,9 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.UserMapper;
-import com.example.todolistcoursework.model.dto.response.JwtResponse;
 import com.example.todolistcoursework.model.dto.request.LoginRequest;
 import com.example.todolistcoursework.model.dto.request.SignupRequest;
+import com.example.todolistcoursework.model.dto.response.JwtResponse;
 import com.example.todolistcoursework.model.dto.response.UserInfoResponse;
 import com.example.todolistcoursework.model.entity.Device;
 import com.example.todolistcoursework.model.entity.RefreshToken;
@@ -18,7 +18,6 @@ import com.example.todolistcoursework.repository.RoleRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,8 +115,6 @@ public class UserService {
         if (user.isEmpty()) {
             throw new AuthException("Error: User doesn't exists");
         }
-        Hibernate.initialize(user.get().getDevices());
-        Hibernate.initialize(user.get().getTokens());
         userRepository.deleteById(userId);
         return UserMapper.toApi(user.get());
     }
