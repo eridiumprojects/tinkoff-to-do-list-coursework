@@ -9,7 +9,6 @@ import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -101,7 +100,7 @@ public class TaskController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Tasks retrieved successfully",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskInfo.class))))
+                            useReturnTypeSchema = true)
             })
     @GetMapping("/list")
     public ResponseEntity<List<TaskInfo>> getTasks() {
@@ -114,7 +113,7 @@ public class TaskController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Tasks filtered successfully",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskInfo.class))))
+                            useReturnTypeSchema = true)
             })
     @GetMapping(value = "/filter")
     public ResponseEntity<List<TaskInfo>> searchTasks(@Valid @RequestBody FilterRequest filterRequest) {
@@ -127,7 +126,7 @@ public class TaskController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Actual tasks retrieved successfully",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskInfo.class))))
+                            useReturnTypeSchema = true)
             })
     @GetMapping(value = "/actual")
     public ResponseEntity<List<TaskInfo>> getActualTasks() {
@@ -140,7 +139,7 @@ public class TaskController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Completed tasks retrieved successfully",
-                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskInfo.class))))
+                            useReturnTypeSchema = true)
             })
     @GetMapping(value = "/completed")
     public ResponseEntity<List<TaskInfo>> getCompletedTasks() {
