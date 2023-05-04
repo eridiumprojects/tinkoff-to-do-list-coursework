@@ -42,7 +42,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "User deleted successfully"),
+                    description = "User deleted successfully",
+                    content = @Content(schema = @Schema(implementation = UserInfoResponse.class))),
             @ApiResponse(
                     responseCode = "409",
                     description = "User doesn't exists")
