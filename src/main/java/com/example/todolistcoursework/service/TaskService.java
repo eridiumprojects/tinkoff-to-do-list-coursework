@@ -12,7 +12,10 @@ import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -51,12 +54,19 @@ public class TaskService {
         }
     }
 
-    public List<TaskInfo> getTasks(Long userId) {
+    public Page<TaskInfo> getTasks(Long userId, Pageable pageable) {
         User user = getUser(userId);
-        return user.getTasks().stream()
+        List<Task> tasks = user.getTasks();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), tasks.size());
+
+        List<TaskInfo> taskInfos = tasks.subList(start, end).stream()
                 .sorted(Comparator.comparing(Task::getCreated).reversed())
                 .sorted(Comparator.comparing(Task::getStatus))
                 .map(TaskMapper::toApi).toList();
+
+        return new PageImpl<>(taskInfos, pageable, tasks.size());
     }
 
     public TaskInfo updateTask(Long userId, Task request) {
@@ -90,21 +100,31 @@ public class TaskService {
         return TaskFilter.filter(filterRequest, user.getTasks().stream().toList());
     }
 
-    public List<TaskInfo> getActualTasks(Long userId) {
+    public Page<TaskInfo> getActualTasks(Long userId, Pageable pageable) {
         var user = getUser(userId);
         Hibernate.initialize(user.getTasks());
-        return user.getTasks().stream()
+
+        List<TaskInfo> taskList = user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.IN_PROGRESS) || a.getStatus().equals(TaskStatus.TODO))
                 .map(TaskMapper::toApi)
                 .toList();
+
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), taskList.size());
+        return new PageImpl<>(taskList.subList(start, end), pageable, taskList.size());
     }
 
-    public List<TaskInfo> getCompletedTasks(Long userId) {
+    public Page<TaskInfo> getCompletedTasks(Long userId, Pageable pageable) {
         var user = getUser(userId);
         Hibernate.initialize(user.getTasks());
-        return user.getTasks().stream()
+
+        List<TaskInfo> taskList = user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.DONE))
                 .map(TaskMapper::toApi)
                 .toList();
+
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), taskList.size());
+        return new PageImpl<>(taskList.subList(start, end), pageable, taskList.size());
     }
 }
