@@ -10,7 +10,7 @@ import lombok.Data;
 public class ErrorInfo {
 
     private Long timestamp;
-    private String errorMessage;
+    private String message;
     private ErrorType type;
     private Object properties;
     private String cause;
@@ -24,7 +24,7 @@ public class ErrorInfo {
     public ErrorInfo(Long timestamp, ErrorType errorType, String errorMessage, String cause) {
         this.timestamp = timestamp;
         this.type = errorType;
-        this.errorMessage = errorMessage;
+        this.message = errorMessage;
         this.cause = cause;
     }
 

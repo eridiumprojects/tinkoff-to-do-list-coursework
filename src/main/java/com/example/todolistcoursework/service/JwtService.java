@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.service;
 
+import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
@@ -18,6 +19,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
 import static java.util.Optional.ofNullable;
 
 @Log4j2
@@ -117,15 +119,15 @@ public class JwtService {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            log.warn("Token expired", expEx);
+            log.warn(TOKEN_EXPIRED, expEx);
         } catch (UnsupportedJwtException unsEx) {
-            log.error("Unsupported jwt", unsEx);
+            log.error(UNSUPPORTED_JWT, unsEx);
         } catch (MalformedJwtException mjEx) {
-            log.error("Malformed jwt", mjEx);
+            log.error(MALFORMED_JWT, mjEx);
         } catch (SignatureException sEx) {
-            log.error("Invalid signature", sEx);
+            log.error(INVALID_SIGNATURE, sEx);
         } catch (Exception e) {
-            log.error("invalid token", e);
+            log.error(INVALID_TOKEN, e);
         }
         return false;
     }

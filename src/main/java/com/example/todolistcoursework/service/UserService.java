@@ -1,6 +1,7 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.UserMapper;
+import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.request.LoginRequest;
 import com.example.todolistcoursework.model.dto.request.SignupRequest;
 import com.example.todolistcoursework.model.dto.response.JwtResponse;
@@ -25,6 +26,8 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,10 +42,10 @@ public class UserService {
 
     public JwtResponse loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new AuthException("Error: User doesn't exist"));
+                .orElseThrow(() -> new AuthException(USER_DOESNT_EXISTS));
 
         if (user.getPassword() != null && !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new AuthException("Error: Invalid password");
+            throw new AuthException(INVALID_PASSWORD);
         }
 
         var device = deviceRepository.findByDeviceToken(loginRequest.getDeviceToken());
@@ -79,11 +82,11 @@ public class UserService {
 
     public UserInfoResponse registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            throw new ObjectAlreadyExists("Error: Username is already taken!");
+            throw new ObjectAlreadyExists(USERNAME_ALREADY_TAKEN);
         }
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new ObjectAlreadyExists("Error: Email is already in use!");
+            throw new ObjectAlreadyExists(EMAIL_ALREADY_TAKEN);
         }
 
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(),
@@ -94,7 +97,7 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository
                 .findByName(ERole.USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
+                .orElseThrow(() -> new RuntimeException(ROLE_USER_NOT_FOUND));
         roles.add(userRole);
         user.setRoles(roles);
         var registeredUser = userRepository.save(user);
@@ -105,7 +108,7 @@ public class UserService {
     public UserInfoResponse getUserInfo(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new AuthException("Error: User doesn't exists");
+            throw new AuthException(USER_DOESNT_EXISTS);
         }
         return UserMapper.toApi(user.get());
     }
@@ -113,7 +116,7 @@ public class UserService {
     public UserInfoResponse deleteUser(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new AuthException("Error: User doesn't exists");
+            throw new AuthException(USER_DOESNT_EXISTS);
         }
         userRepository.deleteById(userId);
         return UserMapper.toApi(user.get());

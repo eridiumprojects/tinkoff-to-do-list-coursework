@@ -1,6 +1,7 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.TaskMapper;
+import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.request.FilterRequest;
 import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
@@ -22,6 +23,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.todolistcoursework.model.constant.ErrorMessagePool.USER_DOESNT_HAVE_CURRENT_TASK;
+import static com.example.todolistcoursework.model.constant.ErrorMessagePool.USER_NOT_FOUND;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,7 +36,7 @@ public class TaskService {
     private User getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new ObjectNotFoundException("Error: There is no such user");
+            throw new ObjectNotFoundException(USER_NOT_FOUND);
         }
         return user.get();
     }
@@ -50,7 +54,7 @@ public class TaskService {
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException("Error: This user does not have such task");
+            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 
@@ -80,7 +84,7 @@ public class TaskService {
             var result = taskRepository.save(existingTask);
             return TaskMapper.toApi(result);
         } else {
-            throw new ObjectNotFoundException("Error: This user does not have such task");
+            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 
@@ -90,7 +94,7 @@ public class TaskService {
             taskRepository.deleteById(id);
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException("Error: This user does not have such task");
+            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 

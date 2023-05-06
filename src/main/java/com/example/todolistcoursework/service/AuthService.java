@@ -1,5 +1,6 @@
 package com.example.todolistcoursework.service;
 
+import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.request.RefreshRequest;
 import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.RefreshToken;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
 
 @Slf4j
 @Service
@@ -34,27 +37,27 @@ public class AuthService {
 
     public RefreshResponse refresh(RefreshRequest request) {
         if (!jwtService.validateRefreshToken(request.getRefreshToken())) {
-            throw new AuthException("Error: Invalid refresh token");
+            throw new AuthException(INVALID_REFRESH_TOKEN);
         }
 
         var claims = jwtService.getRefreshClaims(request.getRefreshToken());
         var userId = Long.parseLong(claims.getUserId());
         var user = userRepository.findById(userId)
-                .orElseThrow(() -> new AuthException("User not found"));
+                .orElseThrow(() -> new AuthException(USER_NOT_FOUND));
         var deviceId = Long.parseLong(claims.getDeviceId());
         var device = deviceRepository.findById(deviceId)
-                .orElseThrow(() -> new AuthException("Device is not found"));
+                .orElseThrow(() -> new AuthException(DEVICE_NOT_FOUND));
         var role = claims.getRole();
 
         var currentRefreshToken = refreshTokenRepository.findByToken(request.getRefreshToken());
 
         if (currentRefreshToken.isEmpty()) {
-            throw new AuthException("Error: Refresh token doesn't exist");
+            throw new AuthException(REFRESH_TOKEN_DOESNT_EXISTS);
         }
 
         refreshTokenRepository.deleteById(currentRefreshToken.get().getId());
         if (!jwtService.validateAccessTokenLifetime(device.getId())) {
-            throw new AuthException("We found a suspicious activity on your account. Please, log in again");
+            throw new AuthException(SUSPICIOUS_ACTIVITY);
         }
 
         var tokens = jwtService.generateAccessRefreshTokens(user, device.getId(), role);
