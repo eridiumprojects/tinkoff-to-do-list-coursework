@@ -33,8 +33,7 @@ spring:
     schemas: public
   data:
     redis:
-      host: localhost
-      port: 6379
+      url: redis://localhost:6379
 
 security:
   jwt:
