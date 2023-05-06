@@ -1,6 +1,7 @@
 package com.example.todolistcoursework.advice;
 
 import com.example.todolistcoursework.model.exception.AuthException;
+import com.example.todolistcoursework.model.exception.GeneralExceptionBase;
 import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
 import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
 import com.example.todolistcoursework.security.ErrorInfo;
@@ -43,18 +44,30 @@ public class AdviceController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {ObjectNotFoundException.class})
     public ResponseEntity<Object> handleNotFound(ObjectNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        var errorInfo = new ErrorInfo(
+                ex.getTimestamp(),
+                ex.getErrorType(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
     }
 
 
     @ExceptionHandler(ObjectAlreadyExists.class)
     public ResponseEntity<Object> handleAlreadyExists(ObjectAlreadyExists ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+        var errorInfo = new ErrorInfo(
+                ex.getTimestamp(),
+                ex.getErrorType(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = {AuthException.class})
     public ResponseEntity<Object> handleAuthException(AuthException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        var errorInfo = new ErrorInfo(
+                ex.getTimestamp(),
+                ex.getErrorType(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -65,7 +78,6 @@ public class AdviceController extends ResponseEntityExceptionHandler {
                 ex.getMessage(),
                 ex.getCause().toString());
         return new ResponseEntity<>(
-                errorInfo,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
