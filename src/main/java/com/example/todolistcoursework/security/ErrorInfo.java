@@ -15,10 +15,10 @@ public class ErrorInfo {
     private Object properties;
     private String cause;
 
-    public ErrorInfo(Long timestamp, ErrorType errorType, String cause) {
+    public ErrorInfo(Long timestamp, ErrorType errorType, String message) {
         this.timestamp = timestamp;
         this.type = errorType;
-        this.cause = cause;
+        this.message = message;
     }
 
     public ErrorInfo(Long timestamp, ErrorType errorType, String errorMessage, String cause) {
