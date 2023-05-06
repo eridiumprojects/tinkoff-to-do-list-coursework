@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -33,7 +35,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    private User getUser(Long userId) {
+    User getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException(USER_NOT_FOUND);
@@ -41,6 +43,7 @@ public class TaskService {
         return user.get();
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
@@ -73,6 +76,7 @@ public class TaskService {
         return new PageImpl<>(taskInfos, pageable, tasks.size());
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo updateTask(Long userId, Task request) {
         Optional<Task> task = taskRepository.findById(request.getId());
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
@@ -88,6 +92,7 @@ public class TaskService {
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo deleteTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {

@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -40,6 +42,7 @@ public class UserService {
     private final DeviceRepository deviceRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public JwtResponse loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new AuthException(USER_DOESNT_EXISTS));
@@ -80,6 +83,7 @@ public class UserService {
                 user.getRoles().stream().map(e -> e.getName().getAuthority()).toList());
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserInfoResponse registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
             throw new ObjectAlreadyExists(USERNAME_ALREADY_TAKEN);
@@ -113,6 +117,7 @@ public class UserService {
         return UserMapper.toApi(user.get());
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserInfoResponse deleteUser(Long userId) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
