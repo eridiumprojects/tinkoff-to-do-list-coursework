@@ -107,10 +107,8 @@ public class TaskController {
                             useReturnTypeSchema = true)
             })
     @GetMapping("/list")
-    @JsonIgnoreProperties(value = {"pageable"})
-    public ResponseEntity<Page<TaskInfo>> getTasks(Pageable pageable) {
-        Page<TaskInfo> tasks = taskService.getTasks(authService.getJwtAuth().getUserId(), pageable);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<TaskInfo>> getTasks() {
+        return ResponseEntity.ok(taskService.getTasks(authService.getJwtAuth().getUserId()));
     }
 
     @Operation(
@@ -135,10 +133,8 @@ public class TaskController {
                             useReturnTypeSchema = true)
             })
     @GetMapping(value = "/actual")
-    @JsonIgnoreProperties(value = {"pageable"})
-    public ResponseEntity<Page<TaskInfo>> getActualTasks(Pageable pageable) {
-        Page<TaskInfo> tasks = taskService.getActualTasks(authService.getJwtAuth().getUserId(), pageable);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<TaskInfo>> getActualTasks() {
+        return ResponseEntity.ok(taskService.getActualTasks(authService.getJwtAuth().getUserId()));
     }
 
     @Operation(
@@ -150,9 +146,7 @@ public class TaskController {
                             useReturnTypeSchema = true)
             })
     @GetMapping(value = "/completed")
-    @JsonIgnoreProperties(value = {"pageable"})
-    public ResponseEntity<Page<TaskInfo>> getCompletedTasks(Pageable pageable) {
-        Page<TaskInfo> tasks = taskService.getCompletedTasks(authService.getJwtAuth().getUserId(), pageable);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<TaskInfo>> getCompletedTasks() {
+        return ResponseEntity.ok(taskService.getCompletedTasks(authService.getJwtAuth().getUserId()));
     }
 }

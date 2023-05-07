@@ -1,13 +1,13 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.TaskMapper;
-import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.request.FilterRequest;
 import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.TaskStatus;
-import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
+import com.example.todolistcoursework.model.exception.AuthException;
+import com.example.todolistcoursework.model.exception.ClientException;
 import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.todolistcoursework.model.constant.ErrorMessagePool.USER_DOESNT_HAVE_CURRENT_TASK;
-import static com.example.todolistcoursework.model.constant.ErrorMessagePool.USER_NOT_FOUND;
+import static com.example.todolistcoursework.model.constant.AuthErrorMessages.USER_NOT_FOUND;
+import static com.example.todolistcoursework.model.constant.ClientErrorMessages.USER_DOESNT_HAVE_CURRENT_TASK;
 
 @Slf4j
 @Service
@@ -35,15 +33,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    User getUser(Long userId) {
+    private User getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new ObjectNotFoundException(USER_NOT_FOUND);
+            throw new AuthException(USER_NOT_FOUND);
         }
         return user.get();
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
@@ -57,26 +54,18 @@ public class TaskService {
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
+            throw new ClientException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 
-    public Page<TaskInfo> getTasks(Long userId, Pageable pageable) {
+    public List<TaskInfo> getTasks(Long userId) {
         User user = getUser(userId);
-        List<Task> tasks = user.getTasks();
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), tasks.size());
-
-        List<TaskInfo> taskInfos = tasks.subList(start, end).stream()
+        return user.getTasks().stream()
                 .sorted(Comparator.comparing(Task::getCreated).reversed())
                 .sorted(Comparator.comparing(Task::getStatus))
                 .map(TaskMapper::toApi).toList();
-
-        return new PageImpl<>(taskInfos, pageable, tasks.size());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo updateTask(Long userId, Task request) {
         Optional<Task> task = taskRepository.findById(request.getId());
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
@@ -88,18 +77,17 @@ public class TaskService {
             var result = taskRepository.save(existingTask);
             return TaskMapper.toApi(result);
         } else {
-            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
+            throw new ClientException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo deleteTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
             taskRepository.deleteById(id);
             return TaskMapper.toApi(task.get());
         } else {
-            throw new ObjectNotFoundException(USER_DOESNT_HAVE_CURRENT_TASK);
+            throw new ClientException(USER_DOESNT_HAVE_CURRENT_TASK);
         }
     }
 
@@ -109,31 +97,21 @@ public class TaskService {
         return TaskFilter.filter(filterRequest, user.getTasks().stream().toList());
     }
 
-    public Page<TaskInfo> getActualTasks(Long userId, Pageable pageable) {
+    public List<TaskInfo> getActualTasks(Long userId) {
         var user = getUser(userId);
         Hibernate.initialize(user.getTasks());
-
-        List<TaskInfo> taskList = user.getTasks().stream()
+        return user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.IN_PROGRESS) || a.getStatus().equals(TaskStatus.TODO))
                 .map(TaskMapper::toApi)
                 .toList();
-
-        int start = (int)pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), taskList.size());
-        return new PageImpl<>(taskList.subList(start, end), pageable, taskList.size());
     }
 
-    public Page<TaskInfo> getCompletedTasks(Long userId, Pageable pageable) {
+    public List<TaskInfo> getCompletedTasks(Long userId) {
         var user = getUser(userId);
         Hibernate.initialize(user.getTasks());
-
-        List<TaskInfo> taskList = user.getTasks().stream()
+        return user.getTasks().stream()
                 .filter(a -> a.getStatus().equals(TaskStatus.DONE))
                 .map(TaskMapper::toApi)
                 .toList();
-
-        int start = (int)pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), taskList.size());
-        return new PageImpl<>(taskList.subList(start, end), pageable, taskList.size());
     }
 }
