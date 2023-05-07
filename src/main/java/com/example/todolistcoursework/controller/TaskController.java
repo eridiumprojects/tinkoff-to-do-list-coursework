@@ -103,8 +103,8 @@ public class TaskController {
                             useReturnTypeSchema = true)
             })
     @GetMapping("/list")
-    public ResponseEntity<List<TaskInfo>> getTasks() {
-        return ResponseEntity.ok(taskService.getTasks(authService.getJwtAuth().getUserId()));
+    public ResponseEntity<List<TaskInfo>> getTasks(Integer page) {
+        return ResponseEntity.ok(taskService.getTasks(authService.getJwtAuth().getUserId(), page));
     }
 
     @Operation(
@@ -116,33 +116,7 @@ public class TaskController {
                             useReturnTypeSchema = true)
             })
     @GetMapping(value = "/filter")
-    public ResponseEntity<List<TaskInfo>> searchTasks(@Valid @RequestBody FilterRequest filterRequest) {
+    public ResponseEntity<List<TaskInfo>> searchTasks(@RequestBody FilterRequest filterRequest) {
         return ResponseEntity.ok(taskService.filterTasks(authService.getJwtAuth().getUserId(), filterRequest));
-    }
-
-    @Operation(
-            summary = "Get list of actual tasks",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Actual tasks retrieved successfully",
-                            useReturnTypeSchema = true)
-            })
-    @GetMapping(value = "/actual")
-    public ResponseEntity<List<TaskInfo>> getActualTasks() {
-        return ResponseEntity.ok(taskService.getActualTasks(authService.getJwtAuth().getUserId()));
-    }
-
-    @Operation(
-            summary = "Get list of completed tasks",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Completed tasks retrieved successfully",
-                            useReturnTypeSchema = true)
-            })
-    @GetMapping(value = "/completed")
-    public ResponseEntity<List<TaskInfo>> getCompletedTasks() {
-        return ResponseEntity.ok(taskService.getCompletedTasks(authService.getJwtAuth().getUserId()));
     }
 }

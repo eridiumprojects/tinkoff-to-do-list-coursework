@@ -31,6 +31,7 @@ public class Task {
     @Column
     private String description;
     @Column
+    @Enumerated(value = EnumType.STRING)
     private TaskStatus status;
     @Column
     private LocalDateTime modified;

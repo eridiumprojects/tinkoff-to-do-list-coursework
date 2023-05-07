@@ -12,7 +12,9 @@ import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ import static com.example.todolistcoursework.model.constant.ClientErrorMessages.
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    @Value("${pageable.size}")
+    private Integer pageSize;
 
     private User getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -58,11 +62,12 @@ public class TaskService {
         }
     }
 
-    public List<TaskInfo> getTasks(Long userId) {
-        User user = getUser(userId);
-        return user.getTasks().stream()
-                .sorted(Comparator.comparing(Task::getCreated).reversed())
-                .sorted(Comparator.comparing(Task::getStatus))
+    public List<TaskInfo> getTasks(Long userId, Integer page) {
+        if (page == null || page < 0) page = 0;
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by("created").descending());
+        var pageResponse = taskRepository.findTasksByUserId(userId, pageRequest);
+        return pageResponse.stream()
+                .sorted(Comparator.comparingInt(a -> TaskStatus.getPriority(a.getStatus())))
                 .map(TaskMapper::toApi).toList();
     }
 
@@ -94,26 +99,18 @@ public class TaskService {
     }
 
     public List<TaskInfo> filterTasks(Long userId, FilterRequest filterRequest) {
-        var user = getUser(userId);
-        Hibernate.initialize(user.getTasks());
-        return TaskFilter.filter(filterRequest, user.getTasks().stream().toList());
-    }
+        var pageNumber = filterRequest.getPage();
+        if (pageNumber == null || pageNumber < 0) {
+            pageNumber = 0;
+        }
+        var statuses = filterRequest.getNecessaryStatuses();
+        if (statuses == null || statuses.size() == 0) {
+            statuses = List.of(TaskStatus.values());
+        }
 
-    public List<TaskInfo> getActualTasks(Long userId) {
-        var user = getUser(userId);
-        Hibernate.initialize(user.getTasks());
-        return user.getTasks().stream()
-                .filter(a -> a.getStatus().equals(TaskStatus.IN_PROGRESS) || a.getStatus().equals(TaskStatus.TODO))
-                .map(TaskMapper::toApi)
-                .toList();
-    }
+        var pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by("created").descending());
+        var tasks = taskRepository.findTasksByUserIdAndStatusIn(userId, statuses, pageRequest);
 
-    public List<TaskInfo> getCompletedTasks(Long userId) {
-        var user = getUser(userId);
-        Hibernate.initialize(user.getTasks());
-        return user.getTasks().stream()
-                .filter(a -> a.getStatus().equals(TaskStatus.DONE))
-                .map(TaskMapper::toApi)
-                .toList();
+        return TaskFilter.filter(filterRequest, tasks.stream().toList());
     }
 }

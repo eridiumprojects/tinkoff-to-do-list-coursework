@@ -17,12 +17,6 @@ public class TaskFilter {
             for (var el : filterRequest.getOrders())
                 tasks = filterInternal(tasks, el);
 
-        if (filterRequest.getFromDate() != null)
-            tasks = tasks.stream().filter(e -> e.getDeadline().isAfter(filterRequest.getFromDate())).toList();
-
-        if (filterRequest.getToDate() != null)
-            tasks = tasks.stream().filter(e -> e.getDeadline().isBefore(filterRequest.getToDate())).toList();
-
         return tasks.stream().map(TaskMapper::toApi).toList();
     }
 
@@ -41,7 +35,7 @@ public class TaskFilter {
             }
             case COMPLETED -> {
                 return tasks.stream()
-                        .sorted(Comparator.comparingInt(a -> TaskStatus.priorities.get(a.getStatus())))
+                        .sorted(Comparator.comparingInt(a -> TaskStatus.getPriority(a.getStatus())))
                         .toList();
             }
             case ALPHABET_DESC -> {
@@ -60,8 +54,8 @@ public class TaskFilter {
             case COMPLETED_DESC -> {
                 return tasks.stream()
                         .sorted((a, b) -> Integer.compare(
-                                TaskStatus.priorities.get(b.getStatus()),
-                                TaskStatus.priorities.get(a.getStatus())
+                                TaskStatus.getPriority(b.getStatus()),
+                                TaskStatus.getPriority(a.getStatus())
                         )).toList();
             }
         }

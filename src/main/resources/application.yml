@@ -45,3 +45,6 @@ security:
     refresh:
       secret: refresh
       expiration: 168h
+
+pageable:
+  size: 20
