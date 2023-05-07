@@ -80,11 +80,7 @@ public class UserService {
 
         return new JwtResponse(
                 tokens.getAccessToken(),
-                tokens.getRefreshToken(),
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRoles().stream().map(e -> e.getName().getAuthority()).toList());
+                tokens.getRefreshToken());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
