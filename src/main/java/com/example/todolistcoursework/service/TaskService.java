@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -38,6 +40,7 @@ public class TaskService {
         return user.get();
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo createTask(Long userId, Task task) {
         User user = getUser(userId);
         task.setUser(user);
@@ -63,6 +66,7 @@ public class TaskService {
                 .map(TaskMapper::toApi).toList();
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo updateTask(Long userId, Task request) {
         Optional<Task> task = taskRepository.findById(request.getId());
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
@@ -78,6 +82,7 @@ public class TaskService {
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TaskInfo deleteTask(Long userId, Long id) {
         Optional<Task> task = taskRepository.findById(id);
         if (task.isPresent() && task.get().getUser().getId().equals(userId)) {
