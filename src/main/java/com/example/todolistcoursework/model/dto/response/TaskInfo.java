@@ -15,7 +15,6 @@ public class TaskInfo {
     Long id;
     String data;
     LocalDateTime deadline;
-    Boolean checkbox;
     TaskStatus status;
     String description;
 }
