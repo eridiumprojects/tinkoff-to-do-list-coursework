@@ -1,9 +1,8 @@
 package com.example.todolistcoursework.advice;
 
 import com.example.todolistcoursework.model.exception.AuthException;
-import com.example.todolistcoursework.model.exception.GeneralExceptionBase;
-import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
-import com.example.todolistcoursework.model.exception.ObjectNotFoundException;
+import com.example.todolistcoursework.model.exception.ClientException;
+import com.example.todolistcoursework.model.exception.ServerException;
 import com.example.todolistcoursework.security.ErrorInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,50 +33,35 @@ public class AdviceController extends ResponseEntityExceptionHandler {
 
         var errorInfo = new ErrorInfo(
                 Instant.now().toEpochMilli(),
-                ErrorInfo.ErrorType.CLIENT,
-                ex.getMessage(),
-                ex.getCause().toString());
+                ErrorInfo.ErrorType.CLIENT);
 
         return super.handleExceptionInternal(ex, errorInfo, headers, statusCode, request);
     }
 
-
-    @ExceptionHandler(value = {ObjectNotFoundException.class})
-    public ResponseEntity<Object> handleNotFound(ObjectNotFoundException ex) {
+    @ExceptionHandler(ClientException.class)
+    public ResponseEntity<Object> handleClientException(ClientException ex) {
         var errorInfo = new ErrorInfo(
                 ex.getTimestamp(),
                 ex.getErrorType(),
                 ex.getMessage());
-        return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(ObjectAlreadyExists.class)
-    public ResponseEntity<Object> handleAlreadyExists(ObjectAlreadyExists ex) {
-        var errorInfo = new ErrorInfo(
-                ex.getTimestamp(),
-                ex.getErrorType(),
-                ex.getMessage());
-        return new ResponseEntity<>(errorInfo, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {AuthException.class})
+    @ExceptionHandler(AuthException.class)
     public ResponseEntity<Object> handleAuthException(AuthException ex) {
         var errorInfo = new ErrorInfo(
                 ex.getTimestamp(),
                 ex.getErrorType(),
                 ex.getMessage());
-        return new ResponseEntity<>(errorInfo, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleAll(RuntimeException ex) {
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<Object> handleServerException(ServerException ex) {
         var errorInfo = new ErrorInfo(
-                Instant.now().toEpochMilli(),
-                ErrorInfo.ErrorType.INTERNAL,
-                ex.getMessage(),
-                ex.getCause().toString());
-        return new ResponseEntity<>(
-                errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
+                ex.getTimestamp(),
+                ex.getErrorType(),
+                ex.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

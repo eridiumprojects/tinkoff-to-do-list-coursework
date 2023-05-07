@@ -1,6 +1,6 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.constant.ErrorMessagePool;
+import com.example.todolistcoursework.model.constant.AuthErrorMessages;
 import com.example.todolistcoursework.model.dto.request.RefreshRequest;
 import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.RefreshToken;
@@ -15,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
+import static com.example.todolistcoursework.model.constant.AuthErrorMessages.*;
 
 @Slf4j
 @Service
@@ -43,7 +43,7 @@ public class AuthService {
         var claims = jwtService.getRefreshClaims(request.getRefreshToken());
         var userId = Long.parseLong(claims.getUserId());
         var user = userRepository.findById(userId)
-                .orElseThrow(() -> new AuthException(USER_NOT_FOUND));
+                .orElseThrow(() -> new AuthException(AuthErrorMessages.USER_NOT_FOUND));
         var deviceId = Long.parseLong(claims.getDeviceId());
         var device = deviceRepository.findById(deviceId)
                 .orElseThrow(() -> new AuthException(DEVICE_NOT_FOUND));

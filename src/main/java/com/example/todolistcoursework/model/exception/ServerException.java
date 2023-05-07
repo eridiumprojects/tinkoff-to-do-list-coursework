@@ -8,17 +8,14 @@ import java.time.Instant;
 
 @Getter
 @Setter
-public class ObjectAlreadyExists extends GeneralExceptionBase {
+public class ServerException extends RuntimeException {
     private Long timestamp;
     private ErrorInfo.ErrorType errorType;
+    private String errorMessage;
 
-    public ObjectAlreadyExists() {
-        super();
-    }
-
-    public ObjectAlreadyExists(String message) {
+    public ServerException(String message) {
         super(message);
         this.timestamp = Instant.now().toEpochMilli();
-        this.errorType = ErrorInfo.ErrorType.DUPLICATE;
+        this.errorType = ErrorInfo.ErrorType.SERVER;
     }
 }

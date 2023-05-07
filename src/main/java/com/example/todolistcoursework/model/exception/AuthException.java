@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+
 @Getter
 @Setter
-public class AuthException extends GeneralExceptionBase {
+public class AuthException extends RuntimeException {
     private Long timestamp;
     private ErrorInfo.ErrorType errorType;
     private String errorMessage;

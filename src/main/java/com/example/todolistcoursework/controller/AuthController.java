@@ -7,7 +7,7 @@ import com.example.todolistcoursework.model.dto.response.JwtResponse;
 import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.exception.AuthException;
-import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
+import com.example.todolistcoursework.model.exception.ClientException;
 import com.example.todolistcoursework.service.AuthService;
 import com.example.todolistcoursework.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,14 +39,14 @@ public class AuthController {
                     responseCode = "200",
                     description = "Access token refreshed successfully",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = RefreshResponse.class))
-            )),
+                            array = @ArraySchema(schema = @Schema(implementation = RefreshResponse.class))
+                    )),
             @ApiResponse(
                     responseCode = "409",
                     description = "Invalid refresh token",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
-            )
+                            array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
+                    )
             )})
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(
@@ -60,14 +60,14 @@ public class AuthController {
                     responseCode = "200",
                     description = "User authenticated successfully",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = JwtResponse.class))
-            )),
+                            array = @ArraySchema(schema = @Schema(implementation = JwtResponse.class))
+                    )),
             @ApiResponse(
                     responseCode = "409",
                     description = "Invalid username or password",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
-            )
+                            array = @ArraySchema(schema = @Schema(implementation = AuthException.class))
+                    )
             )})
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(
@@ -81,14 +81,14 @@ public class AuthController {
                     responseCode = "200",
                     description = "User registered successfully",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = User.class))
-            )),
+                            array = @ArraySchema(schema = @Schema(implementation = User.class))
+                    )),
             @ApiResponse(
                     responseCode = "409",
                     description = "Username or email already exists",
                     content = @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = ObjectAlreadyExists.class))
-            )
+                            array = @ArraySchema(schema = @Schema(implementation = ClientException.class))
+                    )
             )})
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(
