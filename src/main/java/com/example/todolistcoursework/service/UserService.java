@@ -1,7 +1,6 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.UserMapper;
-import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.request.LoginRequest;
 import com.example.todolistcoursework.model.dto.request.SignupRequest;
 import com.example.todolistcoursework.model.dto.response.JwtResponse;
@@ -12,7 +11,8 @@ import com.example.todolistcoursework.model.entity.Role;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import com.example.todolistcoursework.model.exception.AuthException;
-import com.example.todolistcoursework.model.exception.ObjectAlreadyExists;
+import com.example.todolistcoursework.model.exception.ClientException;
+import com.example.todolistcoursework.model.exception.ServerException;
 import com.example.todolistcoursework.repository.DeviceRepository;
 import com.example.todolistcoursework.repository.RefreshTokenRepository;
 import com.example.todolistcoursework.repository.RoleRepository;
@@ -26,7 +26,11 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
+import static com.example.todolistcoursework.model.constant.AuthErrorMessages.INVALID_PASSWORD;
+import static com.example.todolistcoursework.model.constant.AuthErrorMessages.USER_DOESNT_EXISTS;
+import static com.example.todolistcoursework.model.constant.ClientErrorMessages.EMAIL_ALREADY_TAKEN;
+import static com.example.todolistcoursework.model.constant.ClientErrorMessages.USERNAME_ALREADY_TAKEN;
+import static com.example.todolistcoursework.model.constant.ErrorMessages.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @Service
@@ -82,11 +86,11 @@ public class UserService {
 
     public UserInfoResponse registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            throw new ObjectAlreadyExists(USERNAME_ALREADY_TAKEN);
+            throw new ClientException(USERNAME_ALREADY_TAKEN);
         }
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new ObjectAlreadyExists(EMAIL_ALREADY_TAKEN);
+            throw new ClientException(EMAIL_ALREADY_TAKEN);
         }
 
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(),
@@ -97,7 +101,7 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository
                 .findByName(ERole.USER)
-                .orElseThrow(() -> new RuntimeException(ROLE_USER_NOT_FOUND));
+                .orElseThrow(() -> new ServerException(INTERNAL_SERVER_ERROR));
         roles.add(userRole);
         user.setRoles(roles);
         var registeredUser = userRepository.save(user);

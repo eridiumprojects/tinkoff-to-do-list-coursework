@@ -1,13 +1,11 @@
 package com.example.todolistcoursework.service;
 
-import com.example.todolistcoursework.model.constant.ErrorMessagePool;
 import com.example.todolistcoursework.model.dto.response.RefreshResponse;
 import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +17,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.todolistcoursework.model.constant.ErrorMessagePool.*;
+import static com.example.todolistcoursework.model.constant.AuthErrorMessages.*;
 import static java.util.Optional.ofNullable;
 
 @Log4j2

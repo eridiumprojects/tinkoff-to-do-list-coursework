@@ -12,8 +12,6 @@ public class ErrorInfo {
     private Long timestamp;
     private String message;
     private ErrorType type;
-    private Object properties;
-    private String cause;
 
     public ErrorInfo(Long timestamp, ErrorType errorType, String message) {
         this.timestamp = timestamp;
@@ -21,11 +19,9 @@ public class ErrorInfo {
         this.message = message;
     }
 
-    public ErrorInfo(Long timestamp, ErrorType errorType, String errorMessage, String cause) {
+    public ErrorInfo(Long timestamp, ErrorType errorType) {
         this.timestamp = timestamp;
         this.type = errorType;
-        this.message = errorMessage;
-        this.cause = cause;
     }
 
 
@@ -33,23 +29,9 @@ public class ErrorInfo {
         CLIENT("client"),
 
         VALIDATION("validation"),
-
-        DUPLICATE("duplicate"),
-
-        ACCESS_DENIED("access_denied"),
-
         AUTH("auth"),
 
-        IDEMPOTENCY_CONFLICT("idempotency_conflict"),
-
-        RATE_LIMIT("rate_limit"),
-
-        INTERNAL("internal"),
-
-        GATEWAY("gateway"),
-
-        DB("db");
-
+        SERVER("server");
         private final String value;
 
         ErrorType(String value) {
