@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
@@ -128,14 +128,25 @@ class TaskServiceTest {
         assertNotNull(newInfo);
     }
 
+//    @Test
+//    void getTasksSuccess() {
+//        int page = 1;
+//        int pageSize = 5;
+//        List<Task> tasks = createListOfTasksByDefault();
+//        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by("created").descending());
+//
+//        when(taskRepository.findTasksByUserId(1L, pageRequest)).thenReturn(any());
+//        assertEquals(tasks, taskService.getTasks(1L, page));
+//    }
+
     @Test
     void deleteTaskSuccess() {
         //given
         Task actualTask = createTaskByDefault();
         //when
         when(taskRepository.findById(anyLong())).thenReturn(Optional.ofNullable(actualTask));
-
+        taskService.deleteTask(1L, 1L);
         //then
+        verify(taskRepository, times(1)).deleteById(1L);
     }
-
 }
