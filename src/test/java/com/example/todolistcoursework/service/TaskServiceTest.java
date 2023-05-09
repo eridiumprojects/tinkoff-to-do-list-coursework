@@ -1,9 +1,13 @@
 package com.example.todolistcoursework.service;
 
 import com.example.todolistcoursework.builder.TaskMapper;
+import com.example.todolistcoursework.model.constant.AuthErrorMessages;
+import com.example.todolistcoursework.model.constant.ClientErrorMessages;
 import com.example.todolistcoursework.model.dto.response.TaskInfo;
 import com.example.todolistcoursework.model.entity.Task;
 import com.example.todolistcoursework.model.entity.User;
+import com.example.todolistcoursework.model.exception.AuthException;
+import com.example.todolistcoursework.model.exception.ClientException;
 import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -30,8 +34,6 @@ class TaskServiceTest {
     public TaskRepository taskRepository;
     @Mock
     public UserRepository userRepository;
-    @Mock
-    public PageRequest pageRequest;
     @InjectMocks
     public TaskService taskService;
 
@@ -85,7 +87,7 @@ class TaskServiceTest {
     }
 
     @Test
-    void createTaskSuccess() {
+    void createTask_success() {
         //given
         User user = createUserByDefault();
         Task actualTask = createTaskByDefault();
@@ -100,7 +102,20 @@ class TaskServiceTest {
     }
 
     @Test
-    void getTaskSuccess() {
+    void createTask_shouldThrowException() {
+        //given
+        User user = createUserByDefault();
+        user.setId(2L);
+        Task actualTask = createTaskByDefault();
+        //when
+        doReturn(Optional.empty()).when(userRepository).findById(anyLong());
+        //then
+        AuthException thrown = assertThrows(AuthException.class, () -> taskService.createTask(1L, actualTask));
+        assertEquals(AuthErrorMessages.USER_NOT_FOUND, thrown.getMessage());
+    }
+
+    @Test
+    void getTask_success() {
         //given
         Task actualTask = createTaskByDefault();
         TaskInfo expectedTask = createTaskInfoByDefault();
@@ -113,7 +128,18 @@ class TaskServiceTest {
     }
 
     @Test
-    void updateTaskSuccess() {
+    void getTask_shouldThrowException() {
+        //given
+
+        //when
+        doReturn(Optional.empty()).when(taskRepository).findById(anyLong());
+        //then
+        ClientException thrown = assertThrows(ClientException.class, () -> taskService.getTask(1L,1L));
+        assertEquals(ClientErrorMessages.USER_DOESNT_HAVE_CURRENT_TASK, thrown.getMessage());
+    }
+
+    @Test
+    void updateTask_success() {
         //given
         Task actualTask = createTaskByDefault();
         Task updatedTask = createTaskByDefault();
@@ -128,6 +154,17 @@ class TaskServiceTest {
         assertNotNull(newInfo);
     }
 
+    @Test
+    void updateTask_shouldThrowException() {
+        //given
+        Task actualTask = createTaskByDefault();
+        //when
+        doReturn(Optional.empty()).when(taskRepository).findById(anyLong());
+        //then
+       ClientException thrown = assertThrows(ClientException.class, () -> taskService.updateTask(1L,actualTask));
+       assertEquals(ClientErrorMessages.USER_DOESNT_HAVE_CURRENT_TASK, thrown.getMessage());
+    }
+
 //    @Test
 //    void getTasksSuccess() {
 //        int page = 1;
@@ -140,7 +177,7 @@ class TaskServiceTest {
 //    }
 
     @Test
-    void deleteTaskSuccess() {
+    void deleteTask_success() {
         //given
         Task actualTask = createTaskByDefault();
         //when
@@ -148,5 +185,16 @@ class TaskServiceTest {
         taskService.deleteTask(1L, 1L);
         //then
         verify(taskRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void deleteTask_shouldThrowException() {
+        //given
+        Task actualTask = createTaskByDefault();
+        //when
+        when(taskRepository.findById(anyLong())).thenReturn(Optional.empty());
+        //then
+        ClientException thrown = assertThrows(ClientException.class, () -> taskService.deleteTask(1L, 1L));
+        assertEquals(ClientErrorMessages.USER_DOESNT_HAVE_CURRENT_TASK, thrown.getMessage());
     }
 }
