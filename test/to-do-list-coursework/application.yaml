@@ -11,3 +11,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
+
+pageable:
+  size: 20

@@ -10,14 +10,13 @@ import com.example.todolistcoursework.model.exception.AuthException;
 import com.example.todolistcoursework.model.exception.ClientException;
 import com.example.todolistcoursework.repository.TaskRepository;
 import com.example.todolistcoursework.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
@@ -36,6 +35,13 @@ class TaskServiceTest {
     public UserRepository userRepository;
     @InjectMocks
     public TaskService taskService;
+    @Value("${pageable.size}")
+    private Integer pageSize;
+
+    @BeforeEach
+    void setSettings() {
+        pageSize = 20;
+    }
 
     public Task createTaskByDefault() {
         return Task.builder()
@@ -166,14 +172,13 @@ class TaskServiceTest {
     }
 
 //    @Test
-//    void getTasksSuccess() {
+//    void getTasks_shouldReturnCorrectList() {
 //        int page = 1;
-//        int pageSize = 5;
 //        List<Task> tasks = createListOfTasksByDefault();
-//        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by("created").descending());
+//        PageRequest pageRequest = PageRequest.of(page,pageSize,Sort.by("created").descending());
 //
 //        when(taskRepository.findTasksByUserId(1L, pageRequest)).thenReturn(any());
-//        assertEquals(tasks, taskService.getTasks(1L, page));
+//        assertEquals(tasks, taskService.getTasks(1L,page));
 //    }
 
     @Test

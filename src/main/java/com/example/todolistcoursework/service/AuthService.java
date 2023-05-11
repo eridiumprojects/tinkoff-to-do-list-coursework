@@ -34,18 +34,15 @@ public class AuthService {
             return JwtAuth.builder().build();
         }
     }
-
     public RefreshResponse refresh(RefreshRequest request) {
         if (!jwtService.validateRefreshToken(request.getRefreshToken())) {
             throw new AuthException(INVALID_REFRESH_TOKEN);
         }
 
         var claims = jwtService.getRefreshClaims(request.getRefreshToken());
-        var userId = Long.parseLong(claims.getUserId());
-        var user = userRepository.findById(userId)
+        var user = userRepository.findById(Long.parseLong(claims.getUserId()))
                 .orElseThrow(() -> new AuthException(AuthErrorMessages.USER_NOT_FOUND));
-        var deviceId = Long.parseLong(claims.getDeviceId());
-        var device = deviceRepository.findById(deviceId)
+        var device = deviceRepository.findById(Long.parseLong(claims.getDeviceId()))
                 .orElseThrow(() -> new AuthException(DEVICE_NOT_FOUND));
         var role = claims.getRole();
 
