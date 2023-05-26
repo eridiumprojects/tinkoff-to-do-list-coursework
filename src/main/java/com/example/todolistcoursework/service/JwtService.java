@@ -5,6 +5,7 @@ import com.example.todolistcoursework.model.entity.User;
 import com.example.todolistcoursework.model.enums.ERole;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
