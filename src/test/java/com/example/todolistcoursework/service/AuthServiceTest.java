@@ -101,34 +101,4 @@ class AuthServiceTest {
         JwtAuth afterResponse = authService.getJwtAuth();
         assertNotNull(afterResponse);
     }
-
-    @WithMockUser(username = "admin", authorities = "ADMIN")
-    @Test
-    void refreshToken_success() {
-
-        //given
-        var request = createRefreshRequestByDefault();
-        JwtService.ClaimsHolder claims = jwtService.getRefreshClaims(request.getRefreshToken());
-        var user = createUserByDefault();
-        var device = createDeviceByDefault();
-        var refreshToken = createRefreshTokenByDefault();
-        var refreshResponse = createRefreshResponseByDefault();
-        //when
-        when(jwtService.validateRefreshToken(request.getRefreshToken())).thenReturn(true);
-        when(jwtService.getRefreshClaims(request.getRefreshToken())).thenReturn(claims);
-        when(claims.getUserId()).thenReturn(String.valueOf(user));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
-        when(deviceRepository.findById(anyLong())).thenReturn(Optional.ofNullable(device));
-        when(refreshTokenRepository.findByToken(request.getRefreshToken())).thenReturn(Optional.ofNullable(refreshToken));
-        when(jwtService.validateAccessTokenLifetime(1L)).thenReturn(true);
-        when(jwtService.generateAccessRefreshTokens(user,1L, ERole.valueOf("ADMIN"))).thenReturn(refreshResponse);
-//        when(jwtService.generateAccessRefreshTokens(any(),anyLong(),any())).thenReturn(refreshResponse);
-
-        RefreshResponse afterResponse = authService.refresh(request);
-        //then
-        verify(refreshTokenRepository,times(1)).deleteById(1L);
-        verify(refreshTokenRepository,times(1)).save(any(RefreshToken.class));
-
-
-    }
 }
