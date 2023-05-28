@@ -108,16 +108,15 @@ class AuthServiceTest {
 
         //given
         var request = createRefreshRequestByDefault();
-        JwtService.ClaimsHolder claims = jwtService.getRefreshClaims(request.getRefreshToken());
         var user = createUserByDefault();
+        var refreshResponse = createRefreshResponseByDefault();
+        JwtService.ClaimsHolder claims = (JwtService.ClaimsHolder) jwtService.getClaims(request.getRefreshToken(), refreshResponse.getAccessToken());
         var device = createDeviceByDefault();
         var refreshToken = createRefreshTokenByDefault();
-        var refreshResponse = createRefreshResponseByDefault();
         //when
         when(jwtService.validateRefreshToken(request.getRefreshToken())).thenReturn(true);
         when(jwtService.getRefreshClaims(request.getRefreshToken())).thenReturn(claims);
-        when(claims.getUserId()).thenReturn(String.valueOf(user));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(userRepository.findById(Long.parseLong(claims.getUserId()))).thenReturn(Optional.ofNullable(user));
         when(deviceRepository.findById(anyLong())).thenReturn(Optional.ofNullable(device));
         when(refreshTokenRepository.findByToken(request.getRefreshToken())).thenReturn(Optional.ofNullable(refreshToken));
         when(jwtService.validateAccessTokenLifetime(1L)).thenReturn(true);

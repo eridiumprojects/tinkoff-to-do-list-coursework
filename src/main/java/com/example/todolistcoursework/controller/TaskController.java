@@ -119,4 +119,9 @@ public class TaskController {
     public ResponseEntity<List<TaskInfo>> searchTasks(@RequestBody FilterRequest filterRequest) {
         return ResponseEntity.ok(taskService.filterTasks(authService.getJwtAuth().getUserId(), filterRequest));
     }
+
+    @GetMapping(value = "/welcome")
+    public ResponseEntity<String> welcome() {
+        return ResponseEntity.ok(("Welcome back!"));
+    }
 }

@@ -139,7 +139,7 @@ public class JwtService {
         return new ClaimsHolder(getClaims(token, jwtRefreshSecret));
     }
 
-    private Claims getClaims(@NonNull String token, @NonNull String secret) {
+    public Claims getClaims(@NonNull String token, @NonNull String secret) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
