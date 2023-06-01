@@ -42,10 +42,10 @@ jobs:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: "archive.zip"
           folderId: ${{ secrets.FOLDER_ID }}
-          name: "documentation.zip"
+          name: "to-do-list-coursework-0.0.1.zip"
 
   telegram_sender:
-    name: Telegram sender
+    name: telegram sender
     needs: build
     runs-on: ubuntu-latest
     steps:
