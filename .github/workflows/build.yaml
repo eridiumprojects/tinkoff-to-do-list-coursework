@@ -24,13 +24,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       -  name: Build artifact
          run: mvn clean package
-#      - name: Create artifact
-#        run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
-      - name: Upload artifact
+      - name: Create artifact zip
+        run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
+      - name: Upload artifact zip
         uses: actions/upload-artifact@v2
         with:
           name: to-do-list-coursework-0.0.1.jar
-          path: target/to-do-list-coursework-0.0.1.jar
+          path: artifact.zip
 
   telegram_sender:
     name: Telegram sender
@@ -45,7 +45,7 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          document: to-do-list-coursework-0.0.1.jar
+          document: target/to-do-list-coursework-0.0.1.jar
           message: |
             ${{ github.actor }} created commit:
             Commit message: ${{ github.event.commits[0].message }}
@@ -53,3 +53,35 @@ jobs:
             Repository: ${{ github.repository }}
 
             See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+
+  jobs:
+    my_job:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Archive files
+          run: |
+            sudo apt-get update
+            sudo apt-get install zip
+            zip -r archive.zip *
+        - name: Upload to google drive
+          uses: adityak74/google-drive-upload-git-action@main
+          with:
+            credentials: ${{ secrets.credentials }}
+            filename: "archive.zip"
+            folderId: ${{ secrets.folderId }}
+            name: "documentation.zip" # optional string
+            overwrite: "true" # optional boolean
+        - name: Make Directory Structure
+          run: |
+            mkdir -p w/x/y
+            date +%s > w/x/y/z
+        - name: Mirror Directory Structure
+          uses: adityak74/google-drive-upload-git-action@main
+          with:
+            credentials: ${{ secrets.DRIVE_CREDENTIALS }}
+            filename: w/x/y/z
+            folderId: ${{ secrets.folderId }}
+            overwrite: "true"
+            mirrorDirectoryStructure: "true"
