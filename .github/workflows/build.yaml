@@ -39,13 +39,13 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: target/to-do-list-coursework-0.0.1.jar
+          name: to-do-list-coursework-0.0.1.jar
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          document: target/to-do-list-coursework-0.0.1.jar
+          document: to-do-list-coursework-0.0.1.jar
           message: |
             ${{ github.actor }} created commit:
             Commit message: ${{ github.event.commits[0].message }}
