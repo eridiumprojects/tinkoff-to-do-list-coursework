@@ -3,7 +3,7 @@ name: DockerBuilder
 on:
   push:
     branches:
-      - 'master'
+      - '*'
 
 jobs:
   build:
