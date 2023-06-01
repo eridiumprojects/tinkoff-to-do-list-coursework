@@ -31,6 +31,18 @@ jobs:
         with:
           name: to-do-list-coursework-0.0.1.jar
           path: artifact.zip
+      - name: Archive files
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip
+          zip -r archive.zip target/to-do-list-coursework-0.0.1.jar
+      - name: Upload to google drive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.CREDENTIALS }}
+          filename: "archive.zip"
+          folderId: ${{ secrets.FOLDER_ID }}
+          name: "to-do-list-coursework-0.0.1.zip"
 
   telegram_sender:
     name: Telegram sender
