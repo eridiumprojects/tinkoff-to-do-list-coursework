@@ -77,8 +77,9 @@ jobs:
         with:
           name: to-do-list-coursework-0.0.1.jar
           path: target
+
       - name: Print files
-      run: cd target && ls -l
+        run: cd target && ls -l
 
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
