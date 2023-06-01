@@ -22,3 +22,12 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      -  name: Build artifact
+         run: mvn clean package
+      - name: Create artifact zip
+        run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
+      - name: Upload artifact zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: to-do-list-coursework-0.0.1.jar
+          path: artifact.zip
