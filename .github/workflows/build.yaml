@@ -1,5 +1,8 @@
 name: Build
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
     branches:
       - '*'
@@ -13,5 +16,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.17
-      - name: Maven Package
-        run: mvn -B clean package -DskipTests
+      - name: Maven Verify
+        run: mvn -B clean verify
+      - name: Test coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
