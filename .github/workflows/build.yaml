@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: to-do-list-coursework-0.0.1
+          name: to-do-list-coursework-0.0.1.jar
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
         with:
