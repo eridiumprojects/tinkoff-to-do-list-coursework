@@ -42,7 +42,7 @@ jobs:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: "archive.zip"
           folderId: ${{ secrets.FOLDER_ID }}
-          name: "to-do-list-coursework-0.0.1.zip"
+          name: "documentation.zip"
 
   telegram_sender:
     name: Telegram sender
