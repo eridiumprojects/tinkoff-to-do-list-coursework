@@ -1,11 +1,10 @@
 name: SonarCloud
-
 on:
   push:
     branches:
-      - '*'
-    pull_request:
-      types: [opened, synchronize, reopened]
+      - 'master'
+  pull_request:
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   sonarcloud:
@@ -15,12 +14,9 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.17
+          java-version: '17'
       - name: Analyze with SonarCloud
-        #set environment variables:
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          #run sonar maven plugin:
-          run: mvn -B verify sonar:sonar -Dsonar.projectKey=pestrikvtodoactions -Dsonar.organization=todo-githubactions -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=./target/site/jacoco/jacoco.xml
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify -P sonar -Dsonar.projectKey=pestrikv_tinkoff-to-do-list-coursework -Dsonar.organization=pestrikvtodoactions -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
