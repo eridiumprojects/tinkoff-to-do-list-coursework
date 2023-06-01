@@ -24,13 +24,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       -  name: Build artifact
          run: mvn clean package
-      - name: Create artifact zip
-        run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
-      - name: Upload artifact zip
+      - name: Create artifact
+#        run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: to-do-list-coursework-0.0.1.jar
-          path: artifact.zip
+          path: target/to-do-list-coursework-0.0.1.jar
 
   telegram_sender:
     name: Telegram sender
@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: artifact.zip
+          name: target/to-do-list-coursework-0.0.1.jar
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
         with:
