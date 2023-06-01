@@ -13,48 +13,60 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+        # Step that uses actions/checkout repository
+        # to clone the code repository to the working directory.
 
-      - name: set up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
           java-version: 1.17
+        # Step that uses actions to install and set up JDK version 17.
+        # This allows building and running the Java application.
 
       - name: Maven Verify
         run: mvn -B clean verify
+        # Step that runs the 'mvn verify' command to build and run tests of the project using Maven.
 
       - name: Test coverage
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+        # Step that uses codecov/codecov-action to send code coverage data to Codecov.
 
-      -  name: Build artifact
-         run: mvn clean package
+      - name: Build artifact
+        run: mvn clean package
+        # Step that runs the 'mvn clean package' command to build the application and create an executable JAR file.
 
       - name: Create artifact zip
         run: zip -r artifact.zip target/to-do-list-coursework-0.0.1.jar
+        # Step that creates a zip archive with the built JAR file.
 
       - name: Upload artifact zip
         uses: actions/upload-artifact@v2
         with:
           name: to-do-list-coursework-0.0.1.jar
           path: artifact.zip
+        # Step that uploads the created zip archive as an artifact in GitHub Actions.
+        # It will be available for download in subsequent steps or other workflows.
 
       - name: Archive files
         run: |
           sudo apt-get update
           sudo apt-get install zip
           zip -r archive.zip target/to-do-list-coursework-0.0.1.jar
+        # Step that executes commands to create an additional archive with the JAR file.
 
-      - name: Upload to google drive
+      - name: Upload to Google Drive
         uses: adityak74/google-drive-upload-git-action@main
         with:
           credentials: ${{ secrets.CREDENTIALS }}
           filename: "archive.zip"
           folderId: ${{ secrets.FOLDER_ID }}
           name: "to-do-list-coursework-0.0.1.zip"
+        # Step that uses actions to upload the archive to Google Drive.
 
   telegram_sender:
-    name: telegram sender
+    name: Telegram Sender
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -62,11 +74,12 @@ jobs:
         with:
           name: to-do-list-coursework-0.0.1.jar
           path: target
-
+        # Step that uses actions to download the artifact from the previous workflow.
       - name: Print files
         run: cd target && ls -l
+        # Step that runs the 'ls -l' command to display the contents of the working directory.
 
-      - name: send telegram message on push
+      - name: Send Telegram message on push
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
@@ -78,4 +91,6 @@ jobs:
 
             Repository: ${{ github.repository }}
 
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            See changes: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+        # Step that uses actions to send a notification to Telegram.
+        # The notification contains information about the commit and a link to the changes in the repository.

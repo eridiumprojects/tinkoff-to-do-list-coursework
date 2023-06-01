@@ -9,14 +9,22 @@ on:
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v1
+        # Step that uses actions/checkout repository
+        # to clone the code repository to the working directory.
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: '17'
+        # Step that uses actions/setup-java to install and set up JDK version 17.
+        # This allows building and running the Java application.
+
       - name: Analyze with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean verify -P sonar -Dsonar.projectKey=pestrikv_tinkoff-to-do-list-coursework -Dsonar.organization=pestrikvtodoactions -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+        # Step that runs the 'mvn clean verify' command with SonarCloud analysis parameters.
