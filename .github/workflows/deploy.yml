@@ -22,7 +22,6 @@ jobs:
       - name: Build
         run: ./mvnw clean package -DskipTests
 
-
       - name: Build docker image
         run: docker build -t todo-api:latest .
 
@@ -30,9 +29,4 @@ jobs:
         run: |
           cd docker
           docker-compose up -d
-
-      - name: Build and push
-        run: |
-          docker tag todo-api:latest pestrikv/todo-api
-          docker push ${{secrets.DOCKER_USERNAME}}/todo-api:latest
 

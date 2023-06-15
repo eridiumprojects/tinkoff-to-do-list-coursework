@@ -85,10 +85,10 @@ jobs:
 #          cd docker
 #          docker-compose down
 
-#      - name: Build and push
-#        run: |
-#          docker tag todo-api:latest pestrikv/todo-api
-#          docker push ${{secrets.DOCKER_USERNAME}}/todo-api:latest
+      - name: Build and push
+        run: |
+          docker tag todo-api:latest pestrikv/todo-api
+          docker push ${{secrets.DOCKER_USERNAME}}/todo-api:latest
 
 
   telegram_sender:
