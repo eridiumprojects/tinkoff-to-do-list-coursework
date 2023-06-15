@@ -20,7 +20,7 @@ jobs:
         run: ls -la
 
       - name: Build
-        run: mvnw clean package -DskipTests
+        run: ./mvnw clean package -DskipTests
 
       - name: Build docker image
         run: docker build -t todo-api:latest .
