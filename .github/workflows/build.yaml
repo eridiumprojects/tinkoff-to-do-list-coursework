@@ -17,9 +17,11 @@ jobs:
         # to clone the code repository to the working directory.
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.17
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
         # Step that uses actions to install and set up JDK version 17.
         # This allows building and running the Java application.
 
@@ -78,10 +80,20 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      - name: Clearing images
+        run: |
+          cd docker
+          docker-compose down
+
       - name: Build and push
         run: |
           docker tag todo-api:latest pestrikv/todo-api
           docker push ${{secrets.DOCKER_USERNAME}}/todo-api:latest
+
+      - name: Starting application
+        run: |
+          cd docker
+          docker-compose up -d
 
 
   telegram_sender:

@@ -31,6 +31,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5433/postgres
     depends_on:
       - postgres
+      - redis
 
 volumes:
   postgres_volume:
