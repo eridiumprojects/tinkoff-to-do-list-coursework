@@ -80,10 +80,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-#      - name: Clearing images
-#        run: |
-#          cd docker
-#          docker-compose down
+      #      - name: Clearing images
+      #        run: |
+      #          cd docker
+      #          docker-compose down
 
       - name: Build and push
         run: |

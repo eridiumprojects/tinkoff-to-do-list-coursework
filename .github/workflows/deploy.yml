@@ -11,10 +11,10 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Clearing old images
-        run: |
-          cd docker
-          docker-compose down
+      #      - name: Clearing old images
+      #        run: |
+      #          cd docker
+      #          docker-compose down
 
       - name: ls
         run: ls -la
@@ -28,5 +28,4 @@ jobs:
       - name: Starting application
         run: |
           cd docker
-          docker-compose up -dd
-
+          docker-compose up -d
