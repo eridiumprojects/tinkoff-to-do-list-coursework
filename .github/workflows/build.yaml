@@ -90,11 +90,6 @@ jobs:
           docker tag todo-api:latest pestrikv/todo-api
           docker push ${{secrets.DOCKER_USERNAME}}/todo-api:latest
 
-      - name: Starting application
-        run: |
-          cd docker
-          docker-compose up -d
-
 
   telegram_sender:
     name: Telegram Sender
