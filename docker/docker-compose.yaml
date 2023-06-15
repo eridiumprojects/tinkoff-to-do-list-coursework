@@ -28,7 +28,7 @@ services:
     ports:
       - 8082:8082
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5433/postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5433/
     depends_on:
       - postgres
       - redis
