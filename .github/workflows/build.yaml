@@ -65,6 +65,25 @@ jobs:
           name: "to-do-list-coursework-0.0.1.zip"
         # Step that uses actions to upload the archive to Google Drive.
 
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: pestrikv/todo-api:latest
+
+
   telegram_sender:
     name: Telegram Sender
     needs: build
